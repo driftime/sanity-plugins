@@ -1,0 +1,87 @@
+{
+  "name": "@driftime/sanity-plugin-color",
+  "version": "0.0.0",
+  "description": "Background and text colors for Sanity Studio, checked against WCAG as authors pair them.",
+  "keywords": [
+    "color",
+    "color-picker",
+    "contrast",
+    "palette",
+    "sanity",
+    "sanity-plugin",
+    "wcag"
+  ],
+  "homepage": "https://github.com/driftime/sanity-plugins/tree/main/packages/color#readme",
+  "bugs": {
+    "url": "https://github.com/driftime/sanity-plugins/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Kenny Heard",
+    "email": "kenny@driftime.com",
+    "url": "https://driftime.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/driftime/sanity-plugins.git",
+    "directory": "packages/color"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./render": {
+      "source": "./src/render.ts",
+      "default": "./dist/render.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./render": "./dist/render.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "typecheck": "tsc",
+    "dev": "plugin-kit link-watch",
+    "build": "bun run typecheck && plugin-kit verify-package --silent && pkg-utils build --strict --check --clean && node --check dist/index.js && node --check dist/render.js",
+    "prepublishOnly": "bun run build",
+    "push": "yalc push"
+  },
+  "dependencies": {
+    "@sanity/client": "^7.26.2 || ^8.0.0",
+    "@sanity/icons": "^5.2.1",
+    "@sanity/ui": "^4.0.3"
+  },
+  "devDependencies": {
+    "@repo/components": "workspace:*",
+    "@repo/lib": "workspace:*",
+    "@sanity/pkg-utils": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "19",
+    "sanity": "^6.10.0"
+  },
+  "browserslist": "extends @sanity/browserslist-config",
+  "engines": {
+    "node": ">=20.19 <22 || >=22.12"
+  },
+  "sanityPlugin": {
+    "verifyPackage": {
+      "tsconfig": false,
+      "scripts": false,
+      "oxlint": false,
+      "oxfmt": false
+    }
+  }
+}
