@@ -1,0 +1,80 @@
+{
+  "name": "@driftime/sanity-plugin-handbook",
+  "version": "0.3.2",
+  "description": "Schema-driven documentation and editorial guides, built right into Sanity Studio.",
+  "keywords": [
+    "documentation",
+    "guides",
+    "handbook",
+    "portable-text",
+    "sanity",
+    "sanity-plugin"
+  ],
+  "homepage": "https://github.com/driftime/sanity-plugins/tree/main/packages/handbook#readme",
+  "bugs": {
+    "url": "https://github.com/driftime/sanity-plugins/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Kenny Heard",
+    "email": "kenny@driftime.com",
+    "url": "https://driftime.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/driftime/sanity-plugins.git",
+    "directory": "packages/handbook"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "typecheck": "tsc",
+    "dev": "plugin-kit link-watch",
+    "build": "bun run typecheck && plugin-kit verify-package --silent && pkg-utils build --strict --check --clean && node --check dist/index.js",
+    "prepublishOnly": "bun run build",
+    "push": "yalc push"
+  },
+  "dependencies": {
+    "@portabletext/react": "^8.0.0",
+    "@sanity/icons": "^5.2.1",
+    "@sanity/ui": "^4.0.3"
+  },
+  "devDependencies": {
+    "@repo/lib": "workspace:*",
+    "@sanity/pkg-utils": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "19",
+    "sanity": "^6.10.0"
+  },
+  "browserslist": "extends @sanity/browserslist-config",
+  "engines": {
+    "node": ">=20.19 <22 || >=22.12"
+  },
+  "sanityPlugin": {
+    "verifyPackage": {
+      "tsconfig": false,
+      "scripts": false,
+      "oxlint": false,
+      "oxfmt": false
+    }
+  }
+}
