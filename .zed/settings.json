@@ -1,0 +1,23 @@
+{
+  "preferred_line_length": 120,
+  "soft_wrap": "bounded",
+  "language_servers": ["!biome", "!eslint", "!typescript-language-server", "..."],
+  "formatter": {
+    "language_server": { "name": "oxfmt" }
+  },
+  "format_on_save": "on",
+  "code_actions_on_format": {
+    "source.fixAll.oxc": true
+  },
+  "lsp": {
+    "vtsls": {
+      "settings": {
+        "typescript": {
+          "preferences": {
+            "importModuleSpecifier": "non-relative"
+          }
+        }
+      }
+    }
+  }
+}

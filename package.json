@@ -1,0 +1,46 @@
+{
+  "name": "sanity-plugins",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*",
+      "packages/@repo/*"
+    ],
+    "catalog": {
+      "@sanity/pkg-utils": "13.0.0"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "check": "oxfmt --check && oxlint",
+    "fix": "oxfmt && oxlint --fix",
+    "typecheck": "bun run --filter './packages/*' --filter './packages/@repo/*' typecheck",
+    "dev": "bun run --filter './packages/*' dev",
+    "build": "bun run --filter './packages/*' build",
+    "push": "bun run --filter './packages/*' push",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "bun run build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "3.0.2",
+    "@sanity/browserslist-config": "1.0.5",
+    "@sanity/plugin-kit": "10.0.9",
+    "@sanity/tsconfig": "2.2.1",
+    "@types/node": "26.5.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "babel-plugin-react-compiler": "1.0.0",
+    "oxfmt": "0.67.0",
+    "oxlint": "1.82.0",
+    "oxlint-tsgolint": "7.0.2001",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "sanity": "6.13.2",
+    "typescript": "7.0.2"
+  },
+  "browserslist": "extends @sanity/browserslist-config",
+  "engines": {
+    "node": ">=20.19 <22 || >=22.12"
+  }
+}

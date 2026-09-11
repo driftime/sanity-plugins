@@ -1,0 +1,4 @@
+[install]
+# Hoist like a standalone install: the plugins augment `@sanity/types`, which Sanity
+# lends them rather than a dependency they declare.
+linker = "hoisted"
