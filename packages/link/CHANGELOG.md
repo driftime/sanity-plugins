@@ -1,5 +1,11 @@
 # @driftime/sanity-plugin-link
 
+## 0.2.0
+
+### Minor Changes
+
+- Added `defineLinkRoutes`, which declares a route table checked and typed on its own, and exported `SanityCheckedLinkRoutes`. A route definition's type now accepts keys beyond `path` and `params`, as the runtime already did. A parameter a path does not declare is reported with the path it was checked against.
+
 ## 0.1.0
 
 ### Minor Changes

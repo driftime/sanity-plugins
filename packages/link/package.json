@@ -1,6 +1,6 @@
 {
   "name": "@driftime/sanity-plugin-link",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Links for Sanity Studio, covering every destination and resolved from routes declared once.",
   "keywords": [
     "link",
