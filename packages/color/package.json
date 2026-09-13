@@ -1,6 +1,6 @@
 {
   "name": "@driftime/sanity-plugin-color",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Background and text colors for Sanity Studio, checked against WCAG as authors pair them.",
   "keywords": [
     "color",
