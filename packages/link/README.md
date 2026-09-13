@@ -253,6 +253,22 @@ defineLinkConfig({
 
 Every `[name]` in a path must have a key in `params`, and `params` can't have a key the path lacks. Either mismatch is a compile error, caught long before a broken link reaches a visitor.
 
+#### Declaring Routes Separately
+
+A route table can be declared in a file of its own with `defineLinkRoutes`. It checks the table as `defineLinkConfig` does and returns it typed, for passing to `defineLinkConfig` as `routes`.
+
+```typescript
+// config/routes.ts
+import { defineLinkRoutes } from "@driftime/sanity-plugin-link/render";
+
+export const routes = defineLinkRoutes({
+  home: { path: "/", sitemap: { changeFrequency: "weekly", priority: 1 } },
+  page: { path: "/[slug]", params: { slug: "slug.current" }, sitemap: { changeFrequency: "monthly", priority: 0.9 } },
+});
+```
+
+A key the plugin does not interpret, such as `sitemap`, is kept as written and typed as it was declared.
+
 <br />
 
 ### Querying
@@ -523,41 +539,43 @@ export interface SanityButton {
 | `linkAnnotation`           | `@driftime/sanity-plugin-link`        | A Portable Text annotation with the link dialog.            |
 | `PortableTextLinkPlugins`  | `@driftime/sanity-plugin-link`        | Makes pasted links write `linkAnnotation`.                  |
 | `defineLinkConfig(config)` | `@driftime/sanity-plugin-link/render` | Takes the routes and returns the site's functions and GROQ. |
+| `defineLinkRoutes(routes)` | `@driftime/sanity-plugin-link/render` | Declares a route table, checked and typed.                  |
 
 <br />
 
 ### Types
 
-| Type                        | Import from                           | Purpose                                                       |
-| --------------------------- | ------------------------------------- | ------------------------------------------------------------- |
-| `SanityLinkConfig`          | `@driftime/sanity-plugin-link`        | Everything `linkPlugin` accepts.                              |
-| `SanityLinkOptions`         | `@driftime/sanity-plugin-link`        | The `options` a link field accepts.                           |
-| `SanityLinkDefinition`      | `@driftime/sanity-plugin-link`        | A field or array member of type `link`.                       |
-| `SanityLinkTitleField`      | `@driftime/sanity-plugin-link`        | The plugin's `title` option.                                  |
-| `SanityLinkResolverConfig`  | `@driftime/sanity-plugin-link/render` | Everything `defineLinkConfig` accepts.                        |
-| `SanityLinkTitleConfig`     | `@driftime/sanity-plugin-link/render` | The configuration's `title` option.                           |
-| `SanityLinkRoutes`          | `@driftime/sanity-plugin-link/render` | The `routes` option.                                          |
-| `SanityLinkRouteDefinition` | `@driftime/sanity-plugin-link/render` | One route, a path pattern and its parameters.                 |
-| `SanityLinkRouteInput`      | `@driftime/sanity-plugin-link/render` | A route declared in code, with its parameters.                |
-| `SanityLinkResolvers`       | `@driftime/sanity-plugin-link/render` | The `resolvers` option.                                       |
-| `SanityResolveLinkProps`    | `@driftime/sanity-plugin-link/render` | Everything `resolveLink` accepts.                             |
-| `SanityLinkState`           | `@driftime/sanity-plugin-link/render` | Everything `resolveLink` returns.                             |
-| `SanityResolvedLink`        | `@driftime/sanity-plugin-link/render` | The `href`, `label`, and `download` for an anchor.            |
-| `SanityLinkResolution`      | `@driftime/sanity-plugin-link/render` | `SanityLinkState`, or a promise of it if a resolver is async. |
-| `SanityLink`                | `@driftime/sanity-plugin-link/render` | Any stored link, narrowed by `type`.                          |
-| `SanityPageLink`            | `@driftime/sanity-plugin-link/render` | A link to a page.                                             |
-| `SanityAnchorLink`          | `@driftime/sanity-plugin-link/render` | A link to an anchor on the current page.                      |
-| `SanityUrlLink`             | `@driftime/sanity-plugin-link/render` | A link to a URL.                                              |
-| `SanityEmailLink`           | `@driftime/sanity-plugin-link/render` | A link to an email address.                                   |
-| `SanityPhoneLink`           | `@driftime/sanity-plugin-link/render` | A link to a phone number.                                     |
-| `SanityFileLink`            | `@driftime/sanity-plugin-link/render` | A link to a file.                                             |
-| `SanityLinkDestination`     | `@driftime/sanity-plugin-link/render` | The destination names.                                        |
-| `SanityLinkReference`       | `@driftime/sanity-plugin-link/render` | A reference to a document, before a query expands it.         |
-| `SanityLinkDocument`        | `@driftime/sanity-plugin-link/render` | The document a page link references.                          |
-| `SanityLinkRouteParams`     | `@driftime/sanity-plugin-link/render` | The route parameters a query adds to a document.              |
-| `SanityLinkSearchParam`     | `@driftime/sanity-plugin-link/render` | One search parameter on a page link.                          |
-| `SanityLinkFile`            | `@driftime/sanity-plugin-link/render` | The file field of a file link.                                |
-| `SanityLinkFileAsset`       | `@driftime/sanity-plugin-link/render` | The asset behind a file link.                                 |
+| Type                        | Import from                           | Purpose                                                         |
+| --------------------------- | ------------------------------------- | --------------------------------------------------------------- |
+| `SanityLinkConfig`          | `@driftime/sanity-plugin-link`        | Everything `linkPlugin` accepts.                                |
+| `SanityLinkOptions`         | `@driftime/sanity-plugin-link`        | The `options` a link field accepts.                             |
+| `SanityLinkDefinition`      | `@driftime/sanity-plugin-link`        | A field or array member of type `link`.                         |
+| `SanityLinkTitleField`      | `@driftime/sanity-plugin-link`        | The plugin's `title` option.                                    |
+| `SanityLinkResolverConfig`  | `@driftime/sanity-plugin-link/render` | Everything `defineLinkConfig` accepts.                          |
+| `SanityLinkTitleConfig`     | `@driftime/sanity-plugin-link/render` | The configuration's `title` option.                             |
+| `SanityLinkRoutes`          | `@driftime/sanity-plugin-link/render` | The `routes` option.                                            |
+| `SanityLinkRouteDefinition` | `@driftime/sanity-plugin-link/render` | One route, a path pattern and its parameters.                   |
+| `SanityLinkRouteInput`      | `@driftime/sanity-plugin-link/render` | A route declared in code, with its parameters.                  |
+| `SanityCheckedLinkRoutes`   | `@driftime/sanity-plugin-link/render` | A route table checked against the parameters its paths declare. |
+| `SanityLinkResolvers`       | `@driftime/sanity-plugin-link/render` | The `resolvers` option.                                         |
+| `SanityResolveLinkProps`    | `@driftime/sanity-plugin-link/render` | Everything `resolveLink` accepts.                               |
+| `SanityLinkState`           | `@driftime/sanity-plugin-link/render` | Everything `resolveLink` returns.                               |
+| `SanityResolvedLink`        | `@driftime/sanity-plugin-link/render` | The `href`, `label`, and `download` for an anchor.              |
+| `SanityLinkResolution`      | `@driftime/sanity-plugin-link/render` | `SanityLinkState`, or a promise of it if a resolver is async.   |
+| `SanityLink`                | `@driftime/sanity-plugin-link/render` | Any stored link, narrowed by `type`.                            |
+| `SanityPageLink`            | `@driftime/sanity-plugin-link/render` | A link to a page.                                               |
+| `SanityAnchorLink`          | `@driftime/sanity-plugin-link/render` | A link to an anchor on the current page.                        |
+| `SanityUrlLink`             | `@driftime/sanity-plugin-link/render` | A link to a URL.                                                |
+| `SanityEmailLink`           | `@driftime/sanity-plugin-link/render` | A link to an email address.                                     |
+| `SanityPhoneLink`           | `@driftime/sanity-plugin-link/render` | A link to a phone number.                                       |
+| `SanityFileLink`            | `@driftime/sanity-plugin-link/render` | A link to a file.                                               |
+| `SanityLinkDestination`     | `@driftime/sanity-plugin-link/render` | The destination names.                                          |
+| `SanityLinkReference`       | `@driftime/sanity-plugin-link/render` | A reference to a document, before a query expands it.           |
+| `SanityLinkDocument`        | `@driftime/sanity-plugin-link/render` | The document a page link references.                            |
+| `SanityLinkRouteParams`     | `@driftime/sanity-plugin-link/render` | The route parameters a query adds to a document.                |
+| `SanityLinkSearchParam`     | `@driftime/sanity-plugin-link/render` | One search parameter on a page link.                            |
+| `SanityLinkFile`            | `@driftime/sanity-plugin-link/render` | The file field of a file link.                                  |
+| `SanityLinkFileAsset`       | `@driftime/sanity-plugin-link/render` | The asset behind a file link.                                   |
 
 <br />
 

@@ -1,4 +1,5 @@
 export { defineLinkConfig } from "@/lib/links";
+export { defineLinkRoutes } from "@/lib/routes";
 
 export type {
   SanityLinkResolvers,
@@ -9,7 +10,12 @@ export type {
   SanityLinkResolution,
   SanityResolveLinkProps,
 } from "@/lib/links";
-export type { SanityLinkRouteDefinition, SanityLinkRoutes, SanityLinkRouteInput } from "@/lib/routes";
+export type {
+  SanityLinkRouteDefinition,
+  SanityLinkRoutes,
+  SanityCheckedLinkRoutes,
+  SanityLinkRouteInput,
+} from "@/lib/routes";
 export type {
   SanityLinkDestination,
   SanityLinkRouteParams,

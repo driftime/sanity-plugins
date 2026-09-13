@@ -15,6 +15,8 @@ export interface SanityLinkRouteDefinition {
   path: string;
   /** GROQ expression resolving each path parameter against the documents the route renders. */
   params?: Record<string, string>;
+  /** Anything else a site attaches to a route, kept as written and read by nothing here. */
+  [key: string]: unknown;
 }
 
 /**
@@ -36,13 +38,16 @@ export type SanityLinkRouteParamNames<TPath extends string> = TPath extends `${s
  * A route table checked against the patterns it declares, so every parameter a path names has a GROQ
  * expression and nothing else does.
  *
+ * @public
  */
 export type SanityCheckedLinkRoutes<TRoutes extends SanityLinkRoutes> = {
   [K in keyof TRoutes]: [SanityLinkRouteParamNames<TRoutes[K]["path"]>] extends [never]
     ? { params?: undefined }
     : {
         params: Record<SanityLinkRouteParamNames<TRoutes[K]["path"]>, string> & {
-          [P in keyof TRoutes[K]["params"]]: P extends SanityLinkRouteParamNames<TRoutes[K]["path"]> ? string : never;
+          [P in keyof TRoutes[K]["params"]]: P extends SanityLinkRouteParamNames<TRoutes[K]["path"]>
+            ? string
+            : { error: `"${P & string}" is not a parameter of "${TRoutes[K]["path"]}"` };
         };
       };
 };
@@ -55,6 +60,20 @@ export type SanityCheckedLinkRoutes<TRoutes extends SanityLinkRoutes> = {
 export type SanityLinkRouteInput<TRoutes extends SanityLinkRoutes> = {
   [K in keyof TRoutes & string]: { _type: K } & Record<SanityLinkRouteParamNames<TRoutes[K]["path"]>, string>;
 }[keyof TRoutes & string];
+
+/**
+ * Declares a route table, checking that every parameter a path names has a GROQ expression and
+ * nothing else does.
+ *
+ * @param routes - Route definitions keyed by the document type each one renders.
+ * @returns The route definitions as given.
+ * @public
+ */
+export function defineLinkRoutes<const TRoutes extends SanityLinkRoutes>(
+  routes: TRoutes & SanityCheckedLinkRoutes<TRoutes>,
+) {
+  return routes;
+}
 
 /**
  * Reads a route's parameter values off a fetched document: those a query projected into `_routeParams`
