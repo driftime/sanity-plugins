@@ -5,17 +5,17 @@ import { LightbulbIcon } from "@/icons/lightbulb";
 import { TriangleAlertIcon } from "@/icons/triangle-alert";
 import type { SanityHandbookMetadata } from "@/plugin";
 
-/** A kind of hint a field can carry, pairing its metadata property with how it is presented. */
+/** A kind of field hint: the metadata property it comes from and how it's shown. */
 interface HintKind {
-  /** Property on the field's handbook metadata holding the hint text. */
+  /** Property in the field's handbook metadata that holds the hint. */
   name: keyof Pick<SanityHandbookMetadata, "tip" | "info" | "caution">;
-  /** Heading shown above the hint text, and the icon's accessible label. */
+  /** Heading above the hint, and the icon's accessible label. */
   label: string;
-  /** Icon identifying the kind wherever the hint appears. */
+  /** Icon for the hint kind. */
   icon: ComponentType<ComponentProps<"svg">>;
 }
 
-/** Hint kinds a field can carry, in the order they are displayed. */
+/** Hint kinds, in display order. */
 export const hintKinds: HintKind[] = [
   { name: "tip", label: "Tip", icon: LightbulbIcon },
   { name: "info", label: "Information", icon: InfoIcon },

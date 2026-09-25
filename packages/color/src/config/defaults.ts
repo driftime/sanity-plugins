@@ -3,29 +3,26 @@ import { createLogger } from "@repo/lib/logger";
 import type { SanityColorStandard } from "@/lib/contrast";
 import type { SanityColorPicker, SanityColorSource } from "@/plugin";
 
-/** Name the package is published under, which every message it reports carries. */
+/** Package name, used as the prefix on every logged message. */
 export const pluginName = "@driftime/sanity-plugin-color";
 
-/** Logger every message the package reports goes through. */
+/** The package's logger. */
 export const logger = createLogger(pluginName);
 
-/** Dataset API version every query the plugin runs is pinned to. */
+/** API version for the plugin's queries. */
 export const apiVersion = "2026-01-01";
 
-/** Colors an author may set where nothing narrows them. */
+/** Colors authors can set when no pickers are configured. */
 export const defaultPickers: SanityColorPicker[] = ["background", "text"];
 
-/**
- * Where colors may come from where nothing narrows them. Image swatches are absent because they
- * need a field to read before they can offer anything.
- */
+/** Color sources when none are configured. Image swatches are left out because they need an image field. */
 export const defaultSources: SanityColorSource[] = ["palette", "custom"];
 
-/** Background a custom selection starts from. */
+/** Starting background for a custom color. */
 export const defaultCustomBackground = "#ffffff";
 
-/** Text color a custom selection starts from. */
+/** Starting text color for a custom color. */
 export const defaultCustomText = "#000000";
 
-/** Conformance level a pairing is judged against where nothing names one. */
+/** Conformance level used when none is configured. */
 export const defaultStandard: SanityColorStandard = "AA";

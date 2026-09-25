@@ -16,11 +16,11 @@ import type { SanityColor } from "@/types";
 import { colorTypeName } from "@/types";
 
 /**
- * Reads a color as a string, narrowing what a validation rule receives untyped.
+ * Reads a color string from the value a validation rule receives.
  *
- * @param value - The stored object the rule is validating.
- * @param field - The color to read from it.
- * @returns The color, or undefined when nothing readable is stored.
+ * @param value - The stored object being validated.
+ * @param field - The field to read.
+ * @returns The color, or undefined when it isn't a string.
  */
 function readColor(value: Record<string, unknown> | undefined, field: string) {
   const color = value?.[field];
@@ -29,13 +29,13 @@ function readColor(value: Record<string, unknown> | undefined, field: string) {
 }
 
 /**
- * Builds the contrast rule for a color field. Only a pairing no reader could make out is rejected;
- * one legible as a heading is reported as a warning.
+ * Creates a contrast validator for a color field. Pairings unreadable at any size are errors, and
+ * pairings readable only at large sizes are warnings.
  *
- * @param palette - The palette bound to the helpers reading it.
- * @param config - Configuration every field falls back to.
- * @param severity - The severity this validator speaks at.
- * @returns The validator, ready for a rule to wrap.
+ * @param palette - The palette.
+ * @param config - The plugin configuration.
+ * @param severity - The severity this validator reports.
+ * @returns The validator.
  */
 function createColorValidator(palette: SanityColorPalette, config: SanityColorConfig, severity: "error" | "warning") {
   return (value: Record<string, unknown> | undefined, context: ValidationContext) => {
@@ -57,30 +57,28 @@ function createColorValidator(palette: SanityColorPalette, config: SanityColorCo
 
     const { verdict, detail } = getContrastReport(ratio, standard);
 
-    // Both severities are registered as rules, so each only speaks when the verdict is its own.
+    // One rule is registered per severity, and each only reports verdicts of its own severity.
     return getVerdictSeverity(verdict) === severity ? detail : true;
   };
 }
 
 /**
- * Creates the object type a color is stored as, offering the palette it is given to every field
- * that does not name its own.
+ * Creates the color object type, offering the plugin's palette to fields that don't set their own.
  *
- * @param palette - The palette bound to the helpers reading it.
- * @param config - Configuration every field falls back to.
- * @returns An object type definition for a stored color.
+ * @param palette - The palette.
+ * @param config - The plugin configuration.
+ * @returns The color type.
  */
 export function createColorType(palette: SanityColorPalette, config: SanityColorConfig) {
   const errorValidator = createColorValidator(palette, config, "error");
   const warningValidator = createColorValidator(palette, config, "warning");
 
   /**
-   * Names a chosen color for the preview, falling back to its hex where it came from outside the
-   * palette and so has no name of its own.
+   * Labels a color for the preview, falling back to its hex code when it isn't from the palette.
    *
-   * @param value - The color to describe.
-   * @param hex - What it resolved to, needed only where it names an image swatch.
-   * @returns The color's label, or undefined when nothing is selected.
+   * @param value - The stored color.
+   * @param hex - The resolved color, needed only for an image swatch.
+   * @returns The label, or undefined when nothing is selected.
    */
   function getColorLabel(value: string | undefined, hex: string | undefined) {
     const resolved = resolveColorValue(value, palette, hex);
@@ -92,8 +90,8 @@ export function createColorType(palette: SanityColorPalette, config: SanityColor
     name: colorTypeName satisfies SanityColor["_type"],
     type: "object",
     icon: createSanityIcon(PaletteIcon),
-    description: "Background color and the text placed on it.",
-    // Deliberately the flat frame a primitive field gets, not the collapsible fieldset Sanity wraps an object in.
+    description: "Background color and the text color on it.",
+    // Uses a primitive field's flat frame on purpose, instead of Sanity's collapsible object fieldset.
     components: { field: Field, input: createInput(palette, config) },
     validation: (rule) => [rule.custom(errorValidator), rule.custom(warningValidator).warning()],
     preview: {
@@ -119,23 +117,23 @@ export function createColorType(palette: SanityColorPalette, config: SanityColor
       defineField({
         name: "background" satisfies keyof SanityColor,
         type: "string",
-        description: "Color painted behind the content.",
+        description: "Color behind the content.",
       }),
       defineField({
         name: "backgroundHex" satisfies keyof SanityColor,
         type: "string",
-        description: "Color the background swatch resolved to, written only where one was chosen.",
+        description: "Hex value of the background's image swatch, set only when a swatch is chosen.",
         hidden: true,
       }),
       defineField({
         name: "text" satisfies keyof SanityColor,
         type: "string",
-        description: "Color of the text on it. Leave empty to take the pairing the palette sets.",
+        description: "Color of the text on the background. Leave empty to pair one automatically.",
       }),
       defineField({
         name: "textHex" satisfies keyof SanityColor,
         type: "string",
-        description: "Color the text swatch resolved to, written only where one was chosen.",
+        description: "Hex value of the text's image swatch, set only when a swatch is chosen.",
         hidden: true,
       }),
     ],

@@ -22,11 +22,11 @@ import { colorTypeName } from "@/types";
 export type InputProps = ObjectInputProps<Partial<SanityColor>, ColorSchemaType>;
 
 /**
- * Creates the input a color field is drawn with, holding the palette and the slots the plugin was
- * configured with so a field naming its own replaces them rather than adding to them.
+ * Creates the color field input, bound to the palette and the plugin's configuration. A field's own lists
+ * replace the plugin's rather than adding to them.
  *
- * @param palette - The palette bound to the helpers reading it.
- * @param config - Configuration every field falls back to.
+ * @param palette - The palette.
+ * @param config - The plugin configuration.
  * @returns The input component.
  */
 export function createInput(palette: SanityColorPalette, config: SanityColorConfig) {
@@ -37,7 +37,7 @@ export function createInput(palette: SanityColorPalette, config: SanityColorConf
     const wantsImage = sources.includes("image");
     const imageField = image.field;
 
-    // Read unconditionally, since a field naming no image must still not change the hooks it calls.
+    // Always called, even without an image field, so the hook order never changes.
     const parent = useFormValue(path.slice(0, -1));
     const imagePalette = useImagePalette(wantsImage ? resolveImageReference(parent, imageField) : undefined);
 
@@ -90,7 +90,7 @@ export function createInput(palette: SanityColorPalette, config: SanityColorConf
       <Stack gap={2}>
         {pickers.length === 0 && (
           <Card padding={3} radius={2} tone="caution">
-            <Text size={1}>This field has no colors to set. Name at least one picker in its options.</Text>
+            <Text size={1}>This field has no color pickers. Add at least one to its pickers option.</Text>
           </Card>
         )}
         <Flex gap={2} align="center" wrap="wrap">

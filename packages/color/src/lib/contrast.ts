@@ -3,39 +3,32 @@ import { isDefined } from "@repo/lib/utils";
 import { parseChannels, parseColor } from "@/lib/formats";
 import { getLuminance } from "@/lib/srgb";
 
-/**
- * Contrast each WCAG 2.2 conformance level asks of text, at body size and at large size. Level A is
- * absent because it sets no contrast requirement at all: the rule begins at AA.
- *
- */
+/** Contrast WCAG 2.2 requires for body and large text at each level. Level A has no contrast requirement. */
 export const contrastStandards = {
   AA: { body: 4.5, large: 3 },
   AAA: { body: 7, large: 4.5 },
 } as const;
 
 /**
- * What a pairing is measured against, or `off` to measure nothing. There is no setting between the
- * two: a standard either applies, in which case what it rejects is rejected, or it does not.
+ * Conformance level to measure pairings against, or `off` to skip measuring.
  *
  * @public
  */
 export type SanityColorStandard = "off" | keyof typeof contrastStandards;
 
 /**
- * How a pairing measures up, being readable everywhere, readable only at large sizes, or not
- * readable at all.
+ * Result of measuring a pairing: readable at any size, readable only at large sizes, or unreadable.
  *
  * @public
  */
 export type SanityColorVerdict = "pass" | "large" | "fail";
 
 /**
- * Measures the contrast between two colors against the WCAG ratio. Each is read in whichever form
- * it was written, so a palette color and one an author typed weigh the same.
+ * Measures the WCAG contrast ratio between two colors, in any supported format.
  *
- * @param first - Color written as hex, RGB, or OKLCH.
- * @param second - The color placed against it.
- * @returns The ratio, or undefined when either color cannot be read.
+ * @param first - A color as hex, RGB, or OKLCH.
+ * @param second - The other color.
+ * @returns The ratio, or undefined when either color can't be read.
  * @public
  */
 export function getContrastRatio(first: string | undefined, second: string | undefined) {
@@ -54,11 +47,11 @@ export function getContrastRatio(first: string | undefined, second: string | und
 }
 
 /**
- * Picks whichever of black or white reads better on a color, matching what `contrast-color()`
- * settles on in CSS, including its preference for white when the two are equal.
+ * Picks black or white, whichever contrasts more with a color. This matches CSS `contrast-color()`,
+ * including its preference for white on a tie.
  *
- * @param value - Color written as hex, RGB, or OKLCH.
- * @returns The more readable of the two, in every form.
+ * @param value - A color as hex, RGB, or OKLCH.
+ * @returns Black or white, in every format.
  */
 export function getBestContrastColor(value: string | undefined) {
   const onWhite = getContrastRatio(value, "#ffffff") ?? 0;
@@ -68,11 +61,11 @@ export function getBestContrastColor(value: string | undefined) {
 }
 
 /**
- * Judges a pairing against a conformance level, so the badge an author sees and the rule that stops
- * a document being published cannot reach different conclusions about the same two colors.
+ * Judges a contrast ratio against a conformance level. The Studio and the publishing rule both use this,
+ * so they always agree.
  *
- * @param ratio - The measured contrast ratio.
- * @param standard - The conformance level to judge against.
+ * @param ratio - The contrast ratio.
+ * @param standard - The conformance level.
  * @returns The verdict.
  * @public
  */

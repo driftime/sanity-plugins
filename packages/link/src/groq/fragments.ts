@@ -3,12 +3,12 @@ import { isDefined } from "@repo/lib/utils";
 import type { SanityLinkDestination } from "@/types";
 
 /**
- * Builds the GROQ that expands a link's destinations, so the document behind a page link and the
- * asset behind a file link both arrive with the link itself.
+ * Builds the GROQ that expands a link's destination, so a page link's document and a file link's asset
+ * arrive with the link.
  *
- * @param routeParamsFragment - GROQ resolving route parameters onto the document a page link points at.
- * @param titleField - Field an internal link borrows its label from when none was written.
- * @returns GROQ conditional projections covering every destination that needs expanding.
+ * @param routeParamsFragment - GROQ that adds route parameters to a linked page.
+ * @param titleField - The field a linked page's title is read from.
+ * @returns GROQ conditional projections for the destinations that need expanding.
  */
 export function createLinkFragment(routeParamsFragment: string, titleField: string) {
   const reference = ["_id", "_type", titleField, routeParamsFragment].filter((part) => isDefined(part)).join(", ");

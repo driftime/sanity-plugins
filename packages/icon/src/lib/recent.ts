@@ -1,13 +1,13 @@
-/** Where the icons an author reached for last are kept, in the browser rather than the dataset. */
+/** Local storage key for recent icons, which are kept in the browser rather than the dataset. */
 const storageKey = "driftime:sanity-plugin-icon:recent";
 
-/** How many icons are remembered. */
+/** Number of recent icons to keep. */
 const limit = 8;
 
 /**
- * Reads the icons an author reached for last.
+ * Reads the recently chosen icons.
  *
- * @returns Names of the remembered icons, most recent first.
+ * @returns The icon names, most recent first.
  */
 export function readRecent() {
   try {
@@ -21,10 +21,10 @@ export function readRecent() {
 }
 
 /**
- * Remembers an icon as the one reached for most recently.
+ * Adds an icon to the front of the recent list.
  *
- * @param name - Name of the chosen icon.
- * @returns Names of the remembered icons, most recent first.
+ * @param name - The chosen icon's name.
+ * @returns The updated icon names, most recent first.
  */
 export function writeRecent(name: string) {
   const updated = [name, ...readRecent().filter((entry) => entry !== name)].slice(0, limit);
@@ -32,17 +32,17 @@ export function writeRecent(name: string) {
   try {
     globalThis.localStorage.setItem(storageKey, JSON.stringify(updated));
   } catch {
-    // A Studio with storage blocked simply does not remember, which is not worth reporting.
+    // If storage is blocked, the icon just isn't remembered.
   }
 
   return updated;
 }
 
-/** Forgets every icon reached for so far. */
+/** Clears the recent icons. */
 export function clearRecent() {
   try {
     globalThis.localStorage.removeItem(storageKey);
   } catch {
-    // A Studio with storage blocked has nothing to forget.
+    // If storage is blocked, there's nothing to clear.
   }
 }

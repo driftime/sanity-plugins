@@ -10,7 +10,7 @@ export const codeType = defineType({
   name: codeTypeName satisfies SanityHandbookCode["_type"],
   type: "object",
   title: "Code",
-  description: "Syntax-highlighted code block with language selection.",
+  description: "Code block with syntax highlighting.",
   icon: createSanityIcon(CodeIcon),
   components: {
     preview: CodePreview,
@@ -25,12 +25,12 @@ export const codeType = defineType({
     defineField({
       name: "code" satisfies keyof SanityHandbookCode,
       type: "text",
-      description: "The source code to display.",
+      description: "Code to display.",
     }),
     defineField({
       name: "language" satisfies keyof SanityHandbookCode,
       type: "string",
-      description: "Programming language used for syntax highlighting.",
+      description: "Language used for syntax highlighting.",
       options: {
         list: [
           { title: "CSS", value: "css" },

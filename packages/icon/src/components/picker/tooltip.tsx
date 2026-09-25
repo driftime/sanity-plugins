@@ -5,17 +5,17 @@ import type { ComponentProps } from "react";
 
 import type { LibraryIcon } from "@/lib/library";
 
-/** The icon a tooltip is describing, paired with the cell it points at. */
+/** Icon under the cursor and the cell showing it. */
 export interface HoveredIcon {
-  /** Icon the cell holds. */
+  /** Icon in the cell. */
   icon: LibraryIcon;
-  /** Cell the tooltip anchors itself to. */
+  /** Cell the tooltip points at. */
   element: HTMLElement;
 }
 
 /**
- * Gap between a tooltip and the cell it points at, given as margins because that is the only lever
- * `@sanity/ui` offers for it. Top only, since a tooltip always sits above.
+ * Gap between the tooltip and its cell, set through margins because `@sanity/ui` offers no other way.
+ * Only the top is set, since the tooltip always appears above the cell.
  */
 const tooltipMargins: [number, number, number, number] = [-4, 0, 0, 0];
 

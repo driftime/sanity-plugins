@@ -3,10 +3,10 @@ import { useState } from "react";
 import { clearRecent, readRecent, writeRecent } from "@/lib/recent";
 
 /**
- * Tracks the icons an author reached for last, keeping what is remembered and what is drawn in step.
- * The stored list is read as the picker mounts, so another tab choosing an icon is picked up too.
+ * Tracks the icons an author chose most recently. The list is read when the picker opens, so choices
+ * made in another tab are included.
  *
- * @returns The remembered names, most recent first, alongside ways to add to and empty them.
+ * @returns The recent icon names, most recent first, and functions to add to and clear them.
  */
 export function useRecentIcons() {
   const [recent, setRecent] = useState<string[]>(readRecent);

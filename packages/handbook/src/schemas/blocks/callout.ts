@@ -13,7 +13,7 @@ export const calloutType = defineType({
   name: calloutTypeName satisfies SanityHandbookCallout["_type"],
   type: "object",
   title: "Callout",
-  description: "Highlighted message block drawing attention to tips, supplementary information, or warnings.",
+  description: "Highlighted tip, note, or warning.",
   icon: createSanityIcon(MessageCircleIcon),
   components: {
     preview: CalloutPreview,
@@ -37,7 +37,7 @@ export const calloutType = defineType({
     defineField({
       name: "variant" satisfies keyof SanityHandbookCallout,
       type: "string",
-      description: "Visual style and intent of the callout.",
+      description: "Kind of callout, which sets its icon and color.",
       initialValue: "tip",
       validation: (rule) => rule.required(),
       options: {
@@ -53,7 +53,7 @@ export const calloutType = defineType({
     defineField({
       name: "body" satisfies keyof SanityHandbookCallout,
       type: "array",
-      description: "Content displayed inside the callout. Supports inline formatting and links.",
+      description: "Text inside the callout, with inline formatting and links.",
       of: [
         defineArrayMember({
           name: "block",

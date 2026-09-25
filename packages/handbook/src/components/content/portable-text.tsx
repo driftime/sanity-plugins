@@ -26,19 +26,18 @@ import type { SanityHandbookLink, SanityKeyedArray } from "@/types";
 import { calloutTypeName, codeTypeName, horizontalRuleTypeName, imageTypeName, videoTypeName } from "@/types";
 
 /**
- * Resolves the space around a list, which tightens once the list is nested inside another.
+ * Works out the vertical space around a list, which is smaller for nested lists.
  *
- * @param level - Nesting depth of the list, counted from one.
- * @returns The vertical space in pixels.
+ * @param level - Nesting depth, starting at 1.
+ * @returns The space in pixels.
  */
 function listSpacing(level: number) {
   return level > 1 ? contentSpacing.nestedList : contentSpacing.list;
 }
 
 /**
- * Component rendered for each block style, mark, and embedded type a guide's rich text can hold.
- * The marks and list items left out are deliberate — the library's own defaults already render them
- * as the surrounding text.
+ * Components for each block style, mark, and embedded type in a guide. Marks and list items not listed
+ * here are left to the library's defaults on purpose.
  */
 const components: PortableTextComponents = {
   block: {
@@ -79,10 +78,10 @@ const components: PortableTextComponents = {
 };
 
 /**
- * Adapts a block component to what Portable Text renders an embedded type with, narrowing the props
- * to the block's own value. The rendering props the library also passes would otherwise reach the DOM.
+ * Wraps a block component for Portable Text, passing only the block's value. Otherwise the library's
+ * other props would reach the DOM.
  *
- * @param Component - Component rendering the block.
+ * @param Component - The block component.
  * @returns A component Portable Text can render the type with.
  */
 function blockRenderer<Value extends PortableTextObject>(Component: ComponentType<{ value: Value }>) {

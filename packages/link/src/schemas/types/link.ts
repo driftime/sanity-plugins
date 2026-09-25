@@ -25,11 +25,10 @@ import type {
 import { linkTypeName, searchParamTypeName } from "@/types";
 
 /**
- * Creates the object type a link is stored as, offering internal pages among the document types it
- * is given and borrowing a label from whichever field those documents hold their title in.
+ * Creates the link object type, with page links to the configured document types.
  *
- * @param config - Configuration the plugin was given.
- * @returns An object type definition for a stored link.
+ * @param config - The plugin configuration.
+ * @returns The link type.
  */
 export function createLinkType(config: SanityLinkConfig) {
   const { documentTypes, title: { field: titleField = defaultTitleField } = {} } = config;
@@ -39,9 +38,9 @@ export function createLinkType(config: SanityLinkConfig) {
     type: "object",
     icon: createSanityIcon(LinkIcon),
     description: "Link to a page, a URL, an email address, a phone number, or a file.",
-    // Deliberately the flat frame a primitive field gets, not the collapsible fieldset Sanity wraps an object in.
+    // Uses a primitive field's flat frame on purpose, instead of Sanity's collapsible object fieldset.
     components: { field: Field, input: createInput(titleField, config) },
-    // The field naming the destination sits behind a tab, so requiring it would report where nobody looks.
+    // Validated here rather than on the hidden `type` field, where the error would never be seen.
     validation: (rule) =>
       rule.custom((value: Partial<SanityLink> | undefined) =>
         !isDefined(value) || isDefined(value.type) ? true : "Choose a destination.",
@@ -66,86 +65,84 @@ export function createLinkType(config: SanityLinkConfig) {
       defineField({
         name: "type" satisfies keyof SanityLink,
         type: "string",
-        description: "Which kind of destination this link points at, chosen from the tabs above.",
-        // Sanity drops an object whose every member is hidden, so this field is kept in the form and draws nothing.
+        description: "Kind of destination, chosen from the tabs.",
+        // Sanity drops an object whose fields are all hidden, so this field stays in the form but renders nothing.
         components: { field: Hidden },
       }),
       defineField({
         name: "reference" satisfies keyof SanityPageLink,
         type: "reference",
-        description: "Page on this site to link to, which keeps working if its address changes.",
+        description: "Page on this site to link to, which stays linked if its address changes.",
         to: documentTypes.map((type) => ({ type })),
         hidden: ({ parent }) => !showsField(parent, "reference"),
         validation: (rule) =>
           rule.custom((value, context) =>
-            isLinkType(context.parent, "page") && !isDefined(value) ? "Choose the page this link opens." : true,
+            isLinkType(context.parent, "page") && !isDefined(value) ? "Choose the page to link to." : true,
           ),
       }),
       defineField({
         name: "url" satisfies keyof SanityUrlLink,
         type: "url",
         title: "URL",
-        description: "Full web address to link to, including the https:// in front of it.",
+        description: "Full web address, including https://.",
         hidden: ({ parent }) => !showsField(parent, "url"),
         validation: (rule) =>
           rule
             .uri({ scheme: ["http", "https"] })
             .custom((value, context) =>
-              isLinkType(context.parent, "url") && !isDefined(value) ? "Enter the web address this link opens." : true,
+              isLinkType(context.parent, "url") && !isDefined(value) ? "Enter the web address." : true,
             ),
       }),
       defineField({
         name: "email" satisfies keyof SanityEmailLink,
         type: "string",
-        description: "Address a message opens to when a visitor follows this link.",
+        description: "Email address the link opens a message to.",
         hidden: ({ parent }) => !showsField(parent, "email"),
         validation: (rule) =>
           rule
             .email()
             .custom((value, context) =>
-              isLinkType(context.parent, "email") && !isDefined(value)
-                ? "Enter the address this link opens a message to."
-                : true,
+              isLinkType(context.parent, "email") && !isDefined(value) ? "Enter the email address." : true,
             ),
       }),
       defineField({
         name: "subject" satisfies keyof SanityEmailLink,
         type: "string",
-        description: "Optional subject line, filled in for the visitor before they start writing.",
+        description: "Subject line filled in for the visitor.",
         hidden: ({ parent }) => !showsField(parent, "subject"),
       }),
       defineField({
         name: "phone" satisfies keyof SanityPhoneLink,
         type: "string",
-        description: "Number to call, written however it reads best. Spacing is ignored.",
+        description: "Phone number to call. Spaces are ignored.",
         hidden: ({ parent }) => !showsField(parent, "phone"),
         validation: (rule) =>
           rule
             .regex(/^\+?[\d\s()-]{6,}$/u, { name: "phone number" })
             .custom((value, context) =>
-              isLinkType(context.parent, "phone") && !isDefined(value) ? "Enter the number this link calls." : true,
+              isLinkType(context.parent, "phone") && !isDefined(value) ? "Enter the phone number." : true,
             ),
       }),
       defineField({
         name: "file" satisfies keyof SanityFileLink,
         type: "file",
-        description: "File a visitor downloads, uploaded here so it stays with the link.",
+        description: "File the visitor downloads.",
         hidden: ({ parent }) => !showsField(parent, "file"),
         validation: (rule) =>
           rule.custom((value, context) =>
-            isLinkType(context.parent, "file") && !isDefined(value) ? "Upload the file this link serves." : true,
+            isLinkType(context.parent, "file") && !isDefined(value) ? "Upload the file to link to." : true,
           ),
       }),
       defineField({
         name: "anchor" satisfies keyof SanityPageLink,
         type: "string",
-        description: "Section of the page to send the visitor to, named without its leading hash.",
+        description: "Section of the page to link to. Leave out the leading #.",
         hidden: ({ parent }) => !showsField(parent, "anchor"),
         components: { input: Anchor },
         validation: (rule) =>
           rule.custom((value, context) => {
             if (!isDefined(value)) {
-              return isLinkType(context.parent, "anchor") ? "Name the section this link scrolls to." : true;
+              return isLinkType(context.parent, "anchor") ? "Enter the section to link to." : true;
             }
 
             return value === convertCase(value, "kebab")
@@ -157,14 +154,14 @@ export function createLinkType(config: SanityLinkConfig) {
         name: "searchParams" satisfies keyof SanityPageLink,
         type: "array",
         title: "Search Parameters",
-        description: "Extra values carried in the address, often recording where a visitor came from.",
+        description: "Query parameters added to the address, such as campaign tracking values.",
         hidden: ({ parent }) => !showsField(parent, "searchParams"),
         components: { input: SearchParams },
         validation: (rule) =>
           rule.custom((value: SanityLinkSearchParam[] | undefined) =>
             !isDefined(value) || value.every(({ key, value: carried }) => !isDefined(carried) || isDefined(key))
               ? true
-              : "Name every parameter that carries a value.",
+              : "Add a name to every parameter that has a value.",
           ),
         of: [
           defineArrayMember({
@@ -185,12 +182,12 @@ export function createLinkType(config: SanityLinkConfig) {
               defineField({
                 name: "key" satisfies keyof SanityLinkSearchParam,
                 type: "string",
-                description: "Name this value is read under.",
+                description: "Parameter name.",
               }),
               defineField({
                 name: "value" satisfies keyof SanityLinkSearchParam,
                 type: "string",
-                description: "Value carried under that name.",
+                description: "Parameter value.",
               }),
             ],
           }),
@@ -199,7 +196,7 @@ export function createLinkType(config: SanityLinkConfig) {
       defineField({
         name: "label" satisfies keyof SanityLink,
         type: "string",
-        description: "Text a visitor clicks, which should still make sense out of context.",
+        description: "Text the visitor clicks. Write it so it makes sense on its own.",
         hidden: ({ parent }) => isLinkMark(parent) || !linkTypes.some(({ name }) => isLinkType(parent, name)),
         validation: (rule) =>
           rule.custom((value, context) => {
@@ -207,7 +204,7 @@ export function createLinkType(config: SanityLinkConfig) {
             if (isLinkMark(parent) || isLinkType(parent, "page")) return true;
 
             return linkTypes.some(({ name }) => isLinkType(parent, name)) && !isDefined(value)
-              ? "Write the text a visitor clicks."
+              ? "Enter the link text."
               : true;
           }),
       }),

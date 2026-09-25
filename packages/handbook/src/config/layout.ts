@@ -1,40 +1,40 @@
-/** Width in pixels the sidebar pane settles at until it is resized. */
+/** Default sidebar width in pixels, until it's resized. */
 export const sidebarWidth = 350;
 
-/** Minimum width in pixels the sidebar pane occupies before collapsing to a vertical label. */
+/** Minimum sidebar width in pixels before it collapses to a vertical label. */
 export const sidebarMinimumWidth = 320;
 
-/** Maximum width in pixels the sidebar pane can be resized to. */
+/** Maximum sidebar width in pixels. */
 export const sidebarMaximumWidth = 640;
 
-/** Minimum width in pixels the content pane occupies. */
+/** Minimum content pane width in pixels. */
 export const contentMinimumWidth = 320;
 
-/** Share of the available space the content pane takes relative to the sidebar. */
+/** Share of the space the content pane takes relative to the sidebar. */
 export const contentFlex = 2.5;
 
 /** Width in pixels of a pane collapsed to a vertical label. */
 export const collapsedPaneWidth = 51;
 
-/** Estimated height in pixels of a sidebar row, refined once the rows are measured. */
+/** Estimated sidebar row height in pixels, corrected once rows are measured. */
 export const sidebarItemHeight = 37;
 
-/** Minimum width in pixels the tool occupies before the Studio scrolls horizontally. */
+/** Minimum tool width in pixels before the Studio scrolls horizontally. */
 export const toolMinimumWidth = 320;
 
-/** Maximum width in pixels of the readable column inside the content pane. */
+/** Maximum width in pixels of the text column in the content pane. */
 export const contentWidth = 640;
 
-/** Horizontal space in pixels between the readable column and the edges of the content pane. */
+/** Space in pixels on either side of the text column. */
 export const contentPaddingInline = 20;
 
-/** Space in pixels above the heading of a content panel. */
+/** Space in pixels above a content panel's heading. */
 export const contentPaddingBlockStart = 32;
 
-/** Space in pixels below the last element of a content panel, so the end of long content clears the pane edge. */
+/** Space in pixels below a content panel's last element, so long content doesn't end at the pane's edge. */
 export const contentPaddingBlockEnd = 220;
 
-/** Vertical rhythm in pixels that guide content and content panels are spaced on. */
+/** Vertical spacing in pixels for guide content and content panels. */
 export const contentSpacing = {
   section: 48,
   paragraph: 16,

@@ -28,7 +28,7 @@ export function Recent({ icons, selected, onSelect, onHover, onForget, ...props 
           padding={2}
           text="Clear"
           onClick={onForget}
-          aria-label="Forget the recently used icons"
+          aria-label="Clear recent icons"
         />
       </Flex>
       <Grid role="listbox" aria-label="Recent icons" gridTemplateColumns={gridColumns} style={gridLayoutStyle}>

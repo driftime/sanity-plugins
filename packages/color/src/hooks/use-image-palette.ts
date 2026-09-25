@@ -7,12 +7,10 @@ import { imagePaletteQuery } from "@/groq/documents";
 import type { SanityImagePalette } from "@/types";
 
 /**
- * Reads the palette Sanity derived for an image, which the form holds only a reference to. Nothing
- * is fetched until a field actually names an image, so a color field without swatches makes no
- * request at all.
+ * Loads the palette Sanity generated for an image. Nothing is fetched until a field names an image.
  *
- * @param reference - Identifier of the image asset to read.
- * @returns The palette, or undefined until it arrives.
+ * @param reference - The image asset ID.
+ * @returns The palette, or undefined until it loads.
  */
 export function useImagePalette(reference: string | undefined) {
   const client = useClient({ apiVersion });
@@ -33,7 +31,7 @@ export function useImagePalette(reference: string | undefined) {
 
         if (active) setPalette(result);
       } catch {
-        // A palette that cannot be read simply offers no swatches, which is not worth reporting.
+        // An unreadable palette just offers no swatches.
         if (active) setPalette(undefined);
       }
     }

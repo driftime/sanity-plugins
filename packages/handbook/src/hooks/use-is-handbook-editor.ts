@@ -3,10 +3,9 @@ import { useCurrentUser } from "sanity";
 import { isPermittedEditor } from "@/lib/editors";
 
 /**
- * Checks whether the current user is permitted to edit Handbook content, treating an absent list as
- * unrestricted access.
+ * Checks whether the current user can edit Handbook documents. Without an editors list, everyone can.
  *
- * @param editors - Email addresses permitted to edit, defaulting to the configured list.
+ * @param editors - Email addresses of the editors, defaulting to the configured list.
  * @returns Whether the current user can edit Handbook documents.
  * @public
  */

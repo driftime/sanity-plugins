@@ -7,138 +7,131 @@ import type {
   SanityDocument,
 } from "sanity";
 
-/**
- * Drops a type's catch-all index signature, so a mistyped field name is an error rather than an
- * unknown value.
- *
- */
+/** Removes a type's index signatures, so a misspelt property is an error rather than `unknown`. */
 export type Strict<T> = { [K in keyof T as string extends K ? never : number extends K ? never : K]: T[K] };
 
-/**
- * Array of objects each carrying the key Sanity assigns to array items, keeping members identifiable.
- *
- */
+/** Array whose items carry the `_key` Sanity gives array members. */
 export type SanityKeyedArray<T> = (KeyedSegment & T)[];
 
 /**
- * A single Handbook page, authored as rich text and rendered in the tool.
+ * A Handbook guide, written in rich text and shown in the tool.
  *
  * @public
  */
 export type SanityHandbookGuide = Strict<SanityDocument> & {
   _type: typeof guideTypeName;
-  /** Display title for this guide. */
+  /** Guide title. */
   title: string;
-  /** Brief description shown beneath the guide heading. */
+  /** Short description below the guide heading. */
   description?: string;
-  /** Portable Text content of the guide. */
+  /** Portable Text content. */
   content: SanityKeyedArray<PortableTextBlock>;
 };
 
-/** Document type name of an individual guide. */
+/** Schema type name of the guide document. */
 export const guideTypeName = "handbook.guide";
 
 /**
- * A titled run of guides in the sidebar, holding them in the order they appear.
+ * A group of guides in the sidebar, in order.
  *
  * @public
  */
 export interface SanityHandbookGuideGroup {
-  /** Display title for this group in the sidebar. */
+  /** Group title in the sidebar. */
   title: string;
-  /** Ordered array of guide references. */
+  /** Guides in the group, in order. */
   guides: SanityKeyedArray<SanityHandbookGuide>;
 }
 
 /**
- * The singleton naming every guide group and the order the sidebar lists them in.
+ * The Handbook document, listing the guide groups in sidebar order.
  *
  * @public
  */
 export type SanityHandbook = Strict<SanityDocument> & {
   _type: typeof handbookTypeName;
-  /** Ordered array of groups, each containing a title and guide references. */
+  /** Guide groups, in order. */
   groups: SanityKeyedArray<SanityHandbookGuideGroup>;
 };
 
-/** Document type name of the Handbook singleton. */
+/** Schema type name of the Handbook document. */
 export const handbookTypeName = "handbook.handbook";
 
 /**
- * An image placed in a guide, with the caption and alternative text shown alongside it.
+ * An image in a guide, with its caption and alternative text.
  *
  * @public
  */
 export type SanityHandbookImage = Strict<PortableTextObject> & {
   _type: typeof imageTypeName;
-  /** Uploaded image asset, narrowed by the query to the URL the viewer renders. */
+  /** Image asset, reduced by the query to its URL. */
   asset?: { url?: string };
-  /** Text displayed beneath the image. */
+  /** Text shown below the image. */
   caption?: string;
-  /** Alternative text for screen readers. */
+  /** Alternative text. */
   alt?: string;
 };
 
-/** Type name of the image block. */
+/** Schema type name of the image block. */
 export const imageTypeName = "handbook.image";
 
 /**
- * A video placed in a guide, with the caption shown beneath it.
+ * A video in a guide, with its caption.
  *
  * @public
  */
 export type SanityHandbookVideo = Strict<PortableTextObject> & {
   _type: typeof videoTypeName;
-  /** Uploaded video asset, narrowed by the query to the URL the viewer renders. */
+  /** Video asset, reduced by the query to its URL. */
   asset?: { url?: string };
-  /** Text displayed beneath the video. */
+  /** Text shown below the video. */
   caption?: string;
 };
 
-/** Type name of the video block. */
+/** Schema type name of the video block. */
 export const videoTypeName = "handbook.video";
 
 /**
- * A block of source code, rendered with syntax highlighting for its language.
+ * A code block, highlighted for its language.
  *
  * @public
  */
 export type SanityHandbookCode = Strict<PortableTextObject> & {
   _type: typeof codeTypeName;
-  /** Source code to display. */
+  /** Code to display. */
   code?: string;
-  /** Programming language used for syntax highlighting. */
+  /** Language used for syntax highlighting. */
   language?: string;
 };
 
-/** Type name of the code block. */
+/** Schema type name of the code block. */
 export const codeTypeName = "handbook.code";
 
 /**
- * The intent a callout is drawn with, choosing its icon and tone.
+ * Kind of callout, which sets its icon and tone.
  *
  * @public
  */
 export type SanityHandbookCalloutVariant = "tip" | "info" | "warning";
 
 /**
- * A highlighted message set apart from the surrounding guide text.
+ * A highlighted message in a guide.
  *
  * @public
  */
 export type SanityHandbookCallout = Strict<PortableTextObject> & {
   _type: typeof calloutTypeName;
-  /** Visual style and intent of the callout. */
+  /** Kind of callout. */
   variant: SanityHandbookCalloutVariant;
-  /** Portable Text content displayed inside the callout, which offers no inline objects. */
+  /** Portable Text inside the callout, without inline objects. */
   body: SanityKeyedArray<PortableTextTextBlock<PortableTextSpan>>;
 };
 
-/** Type name of the callout block. */
+/** Schema type name of the callout block. */
 export const calloutTypeName = "handbook.callout";
 
 /**
- * A divider between sections of a guide, carrying no authored content of its own.
+ * A divider between sections of a guide.
  *
  * @public
  */
@@ -146,11 +139,11 @@ export type SanityHandbookHorizontalRule = Strict<PortableTextObject> & {
   _type: typeof horizontalRuleTypeName;
 };
 
-/** Type name of the horizontal rule block. */
+/** Schema type name of the horizontal rule block. */
 export const horizontalRuleTypeName = "handbook.horizontalRule";
 
 /**
- * A web address applied to a run of guide text.
+ * A link on a run of guide text.
  *
  * @public
  */

@@ -7,8 +7,7 @@ import { resolveIconNode } from "@/lib/nodes";
 import type { SanityIcon } from "@/types";
 
 /**
- * Builds the media a stored icon previews with, so a document lists the drawing an author chose
- * rather than one placeholder standing in for every icon alike.
+ * Creates preview media for a stored icon, so each document shows its own icon instead of a placeholder.
  *
  * @param value - The stored icon.
  * @returns The media component, or undefined when nothing readable was stored.

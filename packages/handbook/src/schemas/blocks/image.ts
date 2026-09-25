@@ -27,19 +27,19 @@ export const imageType = defineType({
       name: "asset" satisfies keyof SanityHandbookImage,
       type: "image",
       title: "Image",
-      description: "Upload or select an image from the media library.",
+      description: "Image to show.",
       options: { hotspot: true },
     }),
     defineField({
       name: "caption" satisfies keyof SanityHandbookImage,
       type: "string",
-      description: "Caption text displayed below the image, such as a credit or a note.",
+      description: "Text shown below the image, such as a credit.",
     }),
     defineField({
       name: "alt" satisfies keyof SanityHandbookImage,
       type: "string",
       title: "Alternative Text",
-      description: "Describes what the image shows for people who cannot see it. Don't repeat the caption here.",
+      description: "Description of the image for people who can't see it. Don't repeat the caption.",
     }),
   ],
 });

@@ -6,32 +6,32 @@ import { documentTypesSections } from "@/sections/document-types";
 import { gettingStartedSections } from "@/sections/getting-started";
 import { guidesSections } from "@/sections/guides";
 
-/** A selectable page, pairing its sidebar row with the panel that row opens. */
+/** A page in the sidebar and the panel it opens. */
 interface Entry {
-  /** Identifier shared by the sidebar row and its panel. */
+  /** ID shared by the sidebar row and its panel. */
   id: string;
-  /** Label shown in the sidebar and as the panel heading. */
+  /** Label in the sidebar and heading of the panel. */
   title: string;
-  /** Description shown beneath the panel heading. */
+  /** Description below the panel heading. */
   description?: string;
-  /** Icon component shown beside the sidebar label. */
+  /** Icon next to the sidebar label. */
   icon?: ComponentType;
-  /** Builds the panel's content, called only while the entry is active. */
+  /** Renders the panel's content, only while the entry is selected. */
   render: () => ReactNode;
 }
 
-/** A titled run of entries, drawn as a sidebar heading and the rows beneath it. */
+/** A sidebar heading and the entries below it. */
 interface Section {
-  /** Text shown above the entries it introduces. */
+  /** Heading text. */
   title: string;
-  /** Entries belonging to the section. */
+  /** Entries in the section. */
   entries: Entry[];
 }
 
 /**
- * Composes every page the Handbook shows, in sidebar order.
+ * Lists every page in the Handbook, in sidebar order.
  *
- * @returns Sections from the built-in pages, the configured document roles, and the authored guides.
+ * @returns The built-in pages, the configured document roles, and the guide groups, as sections.
  */
 export function useSections(): Section[] {
   const { roles, handbook, loading } = useHandbookContext();

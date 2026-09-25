@@ -26,13 +26,13 @@ export const videoType = defineType({
       name: "asset" satisfies keyof SanityHandbookVideo,
       type: "file",
       title: "Video",
-      description: "Upload or select a video from the media library.",
+      description: "Video to show.",
       options: { accept: "video/*" },
     }),
     defineField({
       name: "caption" satisfies keyof SanityHandbookVideo,
       type: "string",
-      description: "Caption text displayed below the video, such as a credit or a note.",
+      description: "Text shown below the video, such as a credit.",
     }),
   ],
 });

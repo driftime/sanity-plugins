@@ -1,2 +1,2 @@
-/** Palette Sanity derived for one image asset, read by the identifier the form holds for it. */
+/** Palette Sanity generated for an image asset, by asset ID. */
 export const imagePaletteQuery = "*[_id == $id][0].metadata.palette";

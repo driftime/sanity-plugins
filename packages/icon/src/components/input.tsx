@@ -16,7 +16,7 @@ import type { SanityIconConfig, SanityIconOptions } from "@/plugin";
 import type { SanityIcon } from "@/types";
 import { iconTypeName } from "@/types";
 
-/** Compiled shape of an icon field, carrying the options the field itself was given. */
+/** Compiled icon field type, with the field's own options. */
 interface IconSchemaType extends ObjectSchemaType {
   options?: SanityIconOptions;
 }
@@ -24,10 +24,10 @@ interface IconSchemaType extends ObjectSchemaType {
 export type InputProps = ObjectInputProps<Partial<SanityIcon>, IconSchemaType>;
 
 /**
- * Creates the input an icon field is drawn with, holding the configuration the plugin was given so a
- * field naming its own icons replaces them rather than adding to them.
+ * Creates the icon field input, bound to the plugin's configuration. A field's own icons replace the
+ * plugin's rather than adding to them.
  *
- * @param config - Configuration every field falls back to.
+ * @param config - The plugin configuration.
  * @returns The input component.
  */
 export function createInput(config: SanityIconConfig) {
@@ -81,7 +81,7 @@ export function createInput(config: SanityIconConfig) {
             onClick={() => {
               onChange(unset());
             }}
-            aria-label="Clear the currently selected icon"
+            aria-label="Clear the selected icon"
           />
         )}
         {open && (

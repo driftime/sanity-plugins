@@ -1,12 +1,12 @@
 import { isDefined, isRecord, readPath } from "@repo/lib/utils";
 
 /**
- * Locates the image a color field draws swatches from and reads the asset it points at. The form
- * holds an asset as an unresolved reference, so this is an identifier rather than the image itself.
+ * Finds the asset ID of the image a color field takes swatches from. The form holds the asset as an
+ * unresolved reference.
  *
  * @param parent - The object holding the color field.
  * @param path - Dotted path from that object to the image.
- * @returns The asset identifier, or undefined when the field names no image or none is set.
+ * @returns The asset ID, or undefined when no image is configured or set.
  */
 export function resolveImageReference(parent: unknown, path: string | undefined) {
   if (!isDefined(path)) return undefined;

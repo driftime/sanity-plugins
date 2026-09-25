@@ -1,4 +1,4 @@
-// Runs inside a consumer's server components, where the compiler's memo cache hook cannot.
+// Consumers render this in server components, where the compiler's memo cache hook can't run.
 "use no memo";
 
 import type { ComponentProps } from "react";
@@ -8,7 +8,7 @@ import { resolveIconNode } from "@/lib/nodes";
 import type { SanityIcon } from "@/types";
 
 /**
- * Properties for drawing a stored icon, extending an SVG element with the value to read it from.
+ * Props for drawing a stored icon: an SVG element's props plus the stored value.
  *
  * @public
  */
@@ -18,10 +18,9 @@ export type SanityIconProps = Omit<ComponentProps<"svg">, "children"> & {
 };
 
 /**
- * Draws the icon an author chose, taking the shapes from the stored value so nothing has to resolve
- * them against an icon library. Renders nothing when the value is absent or unreadable.
+ * Draws a stored icon from the shapes saved with it, without loading an icon library.
  *
- * @returns The icon, or nothing when there is nothing to draw.
+ * @returns The icon, or nothing when the value is missing or unreadable.
  * @public
  */
 export function Icon({ value, ...props }: SanityIconProps) {

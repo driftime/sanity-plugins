@@ -4,10 +4,9 @@ import { createElement } from "react";
 import { Swatch } from "@/components/swatch";
 
 /**
- * Builds the media a stored color previews with, so a document lists the color an author chose
- * rather than one placeholder standing in for every color alike.
+ * Creates preview media for a stored color, so each document shows its own color instead of a placeholder.
  *
- * @param color - The color the swatch paints.
+ * @param color - The color to show.
  * @returns The media component, or undefined when nothing was chosen.
  */
 export function createColorPreview(color: string | undefined) {

@@ -9,27 +9,27 @@ import { sidebarItemHeight, sidebarMaximumWidth, sidebarMinimumWidth, sidebarWid
 import { useHandbookContext } from "@/contexts/handbook";
 import { useSections } from "@/hooks/use-sections";
 
-/** A non-selectable heading introducing the run of sidebar tabs beneath it. */
+/** A heading above a group of sidebar tabs. */
 interface SidebarHeadingItem {
-  /** Marks this entry as a heading rather than a tab. */
+  /** Marks the item as a heading. */
   type: "heading";
-  /** Text shown above the tabs it introduces. */
+  /** Heading text. */
   title: string;
 }
 
-/** A selectable sidebar row bound to a content panel of the same identifier. */
+/** A sidebar row that opens the content panel with the same ID. */
 interface SidebarTabItem {
-  /** Marks this entry as a tab rather than a heading. */
+  /** Marks the item as a tab. */
   type: "tab";
-  /** Identifier shared with the content panel the tab selects. */
+  /** ID shared by the sidebar row and its panel. */
   id: string;
-  /** Display label in the sidebar. */
+  /** Label in the sidebar. */
   label: string;
-  /** Icon component shown beside the label. */
+  /** Icon next to the sidebar label. */
   icon?: ComponentType;
 }
 
-/** An entry in the flat list the sidebar renders. */
+/** An item in the sidebar's flat list. */
 type SidebarItem = SidebarHeadingItem | SidebarTabItem;
 
 // `CommandList` clones what this returns to set `tabIndex`, so a wrapper component would swallow it.

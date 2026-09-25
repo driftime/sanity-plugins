@@ -171,7 +171,7 @@ export function Picker({ allowed, selected, onSelect, ...props }: PickerProps) {
       <Stack gap={4} padding={4}>
         <TextInput
           icon={<SearchIcon />}
-          placeholder="Search by name or by what the icon depicts"
+          placeholder="Search by name or keyword"
           value={search}
           onChange={handleSearch}
           onKeyDown={handleSearchKeyDown}
@@ -203,7 +203,7 @@ export function Picker({ allowed, selected, onSelect, ...props }: PickerProps) {
             {icons.length === 0 && (
               <Flex align="center" justify="center" style={{ height: gridHeight }}>
                 <Text size={1} muted>
-                  No icons are available to choose from.
+                  No icons available.
                 </Text>
               </Flex>
             )}

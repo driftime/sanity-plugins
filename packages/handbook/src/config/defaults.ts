@@ -1,20 +1,20 @@
 import { createLogger } from "@repo/lib/logger";
 
-/** Name the package is published under, which every message it reports carries. */
+/** Package name, used as the prefix on every logged message. */
 export const pluginName = "@driftime/sanity-plugin-handbook";
 
-/** Logger every message the package reports goes through. */
+/** The package's logger. */
 export const logger = createLogger(pluginName);
 
-/** Dataset API version every query the plugin runs is pinned to. */
+/** API version for the plugin's queries. */
 export const apiVersion = "2026-01-01";
 
-/** Title shown in the Studio tool navigation and at the top of the sidebar. */
+/** Default title in the Studio's tool menu and at the top of the sidebar. */
 export const defaultTitle = "Handbook";
 
-/** Fallback title displayed wherever a document has no title of its own. */
+/** Title shown for documents without one. */
 export const defaultDocumentTitle = "Untitled";
 
-/** Fallback message shown when a field has no description. */
+/** Message shown for fields without a description. */
 export const defaultUndocumentedFieldMessage =
-  "This field has not been documented yet. Contact your development team for guidance.";
+  "This field isn't documented yet. Ask your development team for guidance.";

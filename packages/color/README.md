@@ -19,7 +19,9 @@
 
 Every section of a page is painted in something, and Color hands that decision to the author. A field holds a background and the text on it, chosen from a palette the site defines, from the colors Sanity finds in an image on the same document, or as a value typed by hand.
 
-Everything else builds on having those colors in the content model. Palette colors are stored by name rather than value, so a change to the palette reaches every document that uses it. Every pairing is measured against WCAG 2.2 as it is chosen, so a pairing that is legible only at heading sizes is reported as a warning and an illegible one blocks publishing. On the site, one function turns a stored color into hex, RGB, and OKLCH, with the contrast ratio and whether the text is light or dark, so a component paints the pairing without converting anything itself.
+What matters most is that every pairing stays readable. Each one is measured against WCAG 2.2 as the author picks it. A pairing that only works at heading sizes is flagged, and one that no reader could make out can't be published.
+
+Palette colors are stored by name, so a change to the palette reaches every document that uses it. On the site, one function turns a stored color into hex, RGB, and OKLCH, along with its contrast ratio, so a component paints the pairing with nothing left to convert.
 
 <br />
 
@@ -36,7 +38,7 @@ Everything else builds on having those colors in the content model. Palette colo
 
 ## Installation
 
-Color is built for Sanity Studio 6.10 and React 19 and declares both as peer dependencies, so the Studio needs to be on those versions already. Node 22.12 or later is required.
+Color is built for Sanity Studio 6.10 and React 19 and declares both as peer dependencies, so the Studio needs to be on those versions already. Node 20.19 or later is required, or 22.12 or later on Node 22.
 
 ```bash
 bun add -E @driftime/sanity-plugin-color
@@ -112,7 +114,7 @@ export default defineConfig({
 | `sources`  | `SanityColorSource[]` | `["palette", "custom"]`  | Where the colors come from. See [Restricting the Colors](#restricting-the-colors).                         |
 | `image`    | `SanityColorImage`    | every swatch, no field   | Which image to read swatches from, and which to offer. See [Colors from an Image](#colors-from-an-image).  |
 | `custom`   | `SanityColorCustom`   | white and black          | Where a custom selection starts from. See [Custom Colors](#custom-colors).                                 |
-| `preview`  | `SanityColorPreview`  | a specimen               | How the pairing is previewed beneath the pickers. See [Previewing the Pairing](#previewing-the-pairing).   |
+| `preview`  | `SanityColorPreview`  | a specimen               | How the pairing is previewed below the pickers. See [Previewing the Pairing](#previewing-the-pairing).     |
 | `standard` | `SanityColorStandard` | `"AA"`                   | The WCAG level every pairing is measured against, or `"off"`. See [Checking Contrast](#checking-contrast). |
 
 <br />
@@ -125,7 +127,7 @@ A field of type `color` is defined like any other.
 defineField({
   name: "color",
   type: "color",
-  description: "Colors the section is painted with.",
+  description: "Background and text colors for the section.",
 });
 ```
 
@@ -229,7 +231,7 @@ A field sets the same option under `options`, and a key it leaves out keeps the 
 
 ### Previewing the Pairing
 
-The chosen pairing is previewed beside the pickers as a small specimen of two letters. Where the color will sit behind running text, `preview.text` replaces the specimen with a full-width panel beneath the pickers, painted with the sentence given.
+The chosen pairing is previewed beside the pickers as a small specimen of two letters. Where the color will sit behind running text, `preview.text` replaces the specimen with a full-width panel below the pickers that shows the sentence given.
 
 ```typescript
 defineField({

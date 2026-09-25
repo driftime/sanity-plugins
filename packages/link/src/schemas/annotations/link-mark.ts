@@ -6,14 +6,13 @@ import type { SanityLink } from "@/types";
 import { linkMarkTypeName, linkTypeName } from "@/types";
 
 /**
- * The link as a Portable Text annotation, for a consumer's own text types to offer alongside their
- * other annotations. An annotated link takes the text it wraps as its label, so it never asks for
- * one of its own.
+ * The link as a Portable Text annotation, for adding to a site's own text types. Its label is the text it
+ * wraps, so it has no label field.
  *
  * @public
  */
 export const linkAnnotation = defineArrayMember({
-  // The name differs from the type deliberately: it is the name that gets stored as `_type`.
+  // Named differently from the type on purpose, since the name is what's stored as `_type`.
   name: linkMarkTypeName satisfies SanityLink["_type"],
   type: linkTypeName,
   title: "Link",

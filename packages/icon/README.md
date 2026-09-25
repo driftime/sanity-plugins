@@ -36,7 +36,7 @@ When an icon is chosen, its drawing is stored on the document alongside its name
 
 ## Installation
 
-Icon is built for Sanity Studio 6.10 and React 19 and declares both as peer dependencies, so the Studio needs to be on those versions already. Node 22.12 or later is required.
+Icon is built for Sanity Studio 6.10 and React 19 and declares both as peer dependencies, so the Studio needs to be on those versions already. Node 20.19 or later is required, or 22.12 or later on Node 22.
 
 ```bash
 bun add -E @driftime/sanity-plugin-icon

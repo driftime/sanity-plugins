@@ -3,26 +3,25 @@ import { convertCase, isDefined } from "@repo/lib/utils";
 import type { IconNode } from "@/lib/nodes";
 import { parseIconNode } from "@/lib/nodes";
 
-/** Single icon the library offers, carrying the terms a search matches it on. */
+/** Icon in the library, with the terms a search matches against. */
 export interface LibraryIcon {
-  /** Name the icon goes by in the library it came from. */
+  /** Name of the icon in Lucide. */
   name: string;
-  /** Readable form of the name, shown beside the icon. */
+  /** Readable form of the name. */
   label: string;
-  /** What the icon depicts, as a readable list. */
+  /** Keywords describing the icon, as a comma-separated list. */
   tags: string;
   /** Shapes the icon is drawn from. */
   node: IconNode;
-  /** Name and tags flattened into the form a search compares against. */
+  /** Name and keywords, normalised for search. */
   terms: string;
 }
 
 /**
- * Flattens text into the form a search compares against, so a hyphenated icon name and a multi-word
- * tag are matched the same way.
+ * Normalises text for search, so hyphenated names and multi-word keywords match the same way.
  *
- * @param value - The text to flatten.
- * @returns The text in comparable form.
+ * @param value - The text.
+ * @returns The normalised text.
  */
 export function normalizeTerms(value: string) {
   return value
@@ -32,12 +31,12 @@ export function normalizeTerms(value: string) {
 }
 
 /**
- * Narrows the library to a chosen set of icons, in the order they were named. A name the library does
- * not recognise is skipped, so a set outlives the release it was written against.
+ * Narrows the library to the named icons, in the order given. Unknown names are skipped, so a list
+ * keeps working across Lucide releases.
  *
- * @param library - Every icon the library offers.
- * @param names - Names of the icons to offer, or nothing to offer them all.
- * @returns The icons on offer.
+ * @param library - Every icon in the library.
+ * @param names - The icons to offer, or undefined for all of them.
+ * @returns The icons to offer.
  */
 export function selectIcons(library: LibraryIcon[], names: string[] | undefined) {
   if (!isDefined(names)) return library;
@@ -52,10 +51,9 @@ export function selectIcons(library: LibraryIcon[], names: string[] | undefined)
 }
 
 /**
- * Reads the icon library, pairing each drawing with the terms it can be found by. Both files come
- * from the same release as the icons themselves, so the drawings and their terms never disagree.
+ * Loads the icon drawings and their keywords. Both come from the same Lucide release, so they always match.
  *
- * @returns Every icon the library offers.
+ * @returns Every icon in the library.
  */
 async function readLibrary() {
   const [drawings, tags] = await Promise.all([
@@ -84,16 +82,13 @@ async function readLibrary() {
   });
 }
 
-/**
- * The library once asked for, held so every field in a Studio session shares the one request. It is a
- * megabyte of data that never changes within a release, so asking twice only ever costs.
- */
+/** Library request shared by every field in the session, since the data is about a megabyte and never changes. */
 let libraryRequest: Promise<LibraryIcon[]> | undefined = undefined;
 
 /**
- * Reads the icon library, waiting on whatever request is already under way.
+ * Loads the icon library, reusing a request already in progress.
  *
- * @returns Every icon the library offers.
+ * @returns Every icon in the library.
  */
 export async function requestLibrary() {
   libraryRequest ??= readLibrary();

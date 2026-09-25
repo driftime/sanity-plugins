@@ -5,12 +5,11 @@ import type { SanityUrlLink } from "@/types";
 import { linkMarkTypeName } from "@/types";
 
 /**
- * Builds the annotation a pasted address becomes, so an address arriving as markup lands on the link
- * type this plugin registers.
+ * Creates the link annotation for a pasted URL, using this plugin's link type.
  *
- * @param schema - Schema of the editor the paste landed in.
- * @param url - Address the pasted link points at.
- * @returns The annotation to apply, or undefined when the editor offers no link annotation.
+ * @param schema - The editor's schema.
+ * @param url - The pasted URL.
+ * @returns The annotation, or undefined when the editor has no link annotation.
  */
 export function createUrlLink(schema: EditorSchema, url: string) {
   const annotation = schema.annotations.find(({ name }) => name === linkMarkTypeName);

@@ -7,42 +7,43 @@ import type { SanityLinkDestination, linkTypeName } from "@/types";
 
 declare module "@sanity/types" {
   interface IntrinsicDefinitions {
+    /** Definition of a field of type `link`. */
     link: SanityLinkDefinition;
   }
 }
 
 /**
- * Options a link field takes. The list says what is on and replaces whatever the plugin was given,
- * so one line tells you the whole answer.
+ * Options for a link field. A field's own destinations replace the plugin's.
  *
  * @public
  */
 export interface SanityLinkOptions extends ObjectOptions {
-  /** Destinations an author may choose from, offered in the order they are named. All when omitted. */
+  /** Destinations authors can choose from, in the order listed. Defaults to every destination. */
   destinations?: SanityLinkDestination[];
 }
 
 /**
- * Shape of a field or array member holding a link, so its options are completed and checked the way
- * a built-in type's are.
+ * Definition of a field or array member holding a link, so its options are type-checked like a built-in
+ * type's.
  *
  * @public
  */
 export interface SanityLinkDefinition extends Omit<TypeAliasDefinition<typeof linkTypeName, undefined>, "options"> {
+  /** Options for the field. */
   options?: SanityLinkOptions;
 }
 
 /**
- * Everything the plugin accepts, of which only the document types are required.
+ * Plugin configuration. Only `documentTypes` is required.
  *
  * @public
  */
 export interface SanityLinkConfig {
-  /** Document types an internal link may point at, offered in the order they are named. */
+  /** Document types a page link can point to, in the order listed. */
   documentTypes: string[];
-  /** Destinations an author may choose from, offered in the order they are named. All when omitted. */
+  /** Destinations authors can choose from, in the order listed. Defaults to every destination. */
   destinations?: SanityLinkDestination[];
-  /** Where a page's title is read from, for previews and for the label an internal link borrows. */
+  /** Where a page's title is read from, for previews and the text of page links without a label. */
   title?: SanityLinkTitleField;
 }
 
@@ -52,16 +53,16 @@ export interface SanityLinkConfig {
  * @public
  */
 export interface SanityLinkTitleField {
-  /** Field a page holds its title in. Reads `title` when omitted. */
+  /** Field holding a page's title. Defaults to `title`. */
   field?: string;
 }
 
 /**
- * Creates the link field type for Sanity Studio, offering a page, a section of it, an address, an
- * email, a phone number, or a file behind one control, and resolving nothing about routing itself.
+ * Adds a link field type to Sanity Studio that can point to a page, a section, a URL, an email address, a
+ * phone number, or a file. Routing is left to the site.
  *
- * @param config - Plugin configuration.
- * @returns Sanity plugin definition.
+ * @param config - The plugin configuration.
+ * @returns The plugin.
  * @public
  */
 export const linkPlugin = definePlugin<SanityLinkConfig>((config) => ({

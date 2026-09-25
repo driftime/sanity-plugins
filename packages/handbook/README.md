@@ -36,7 +36,7 @@ The first part of the Handbook is generated from the schema. Every document type
 
 ## Installation
 
-Handbook is built for Sanity Studio 6.10 and React 19 and declares both as peer dependencies, so the Studio needs to be on those versions already. Node 22.12 or later is required.
+Handbook is built for Sanity Studio 6.10 and React 19 and declares both as peer dependencies, so the Studio needs to be on those versions already. Node 20.19 or later is required, or 22.12 or later on Node 22.
 
 ```bash
 bun add -E @driftime/sanity-plugin-handbook
@@ -127,7 +127,7 @@ export const page = defineType({
   description: "General-purpose pages.",
   handbook: {
     description:
-      "Standalone pages for anything that does not warrant a document type of its own. Each is reached at its own address and assembled from blocks rather than following a fixed layout.",
+      "Standalone pages for any content that doesn't need a document type of its own. Each page has its own address and is built from blocks rather than following a fixed layout.",
   },
   fields: [
     defineField({
@@ -136,9 +136,9 @@ export const page = defineType({
       description: "Appears in navigation, browser tabs, and search results.",
       handbook: {
         description:
-          "The name this document goes by wherever it is referred to rather than read — navigation menus, browser tabs, search results, and the Studio's own lists. Every document needs one, and it stands behind both the slug and the SEO title whenever those are left blank.",
+          "What the document is called wherever it's listed: navigation menus, browser tabs, search results, and the Studio's own lists. Every document needs one, and it's also used to generate the slug and as the SEO title when those fields are left empty.",
         example: "About Acme Inc.",
-        tip: "Keep it short enough to sit comfortably in a navigation menu.",
+        tip: "Keep it short enough to fit in a navigation menu without wrapping.",
       },
     }),
     defineField({
@@ -148,7 +148,7 @@ export const page = defineType({
       options: { source: "title" },
       handbook: {
         description:
-          "The last part of the page's web address. Generate it from the title and then edit it if the result reads awkwardly — shorter is almost always better.",
+          "The last part of the page's web address. Generate it from the title, then edit it if the result is long or unclear. Shorter slugs are usually better.",
         example: "about-acme-inc",
         caution: "Changing the slug of a published page breaks every link that already points at it.",
       },
@@ -161,7 +161,7 @@ export const page = defineType({
 | ------------- | -------- | --------------------------------------------------------------------------- |
 | `title`       | `string` | Replaces the field or document title in the Handbook.                       |
 | `description` | `string` | Replaces the description, shown under the heading.                          |
-| `example`     | `string` | An example value, shown in italics beneath the description.                 |
+| `example`     | `string` | An example value, shown in italics below the description.                   |
 | `tip`         | `string` | Guidance for the author, shown as a hint icon that opens on hover or click. |
 | `info`        | `string` | Extra context about how the field is used, shown the same way.              |
 | `caution`     | `string` | A warning about constraints or pitfalls, shown the same way.                |
@@ -192,7 +192,7 @@ handbookPlugin({
 
 ### Nested Fields
 
-An object or array field has a control beneath its description that counts its subfields and expands to list them, each documented the way a top-level field is. An array with one member type lists that type's fields, and an array with several lists the members themselves. Sanity's own types, such as `image`, `file`, and `slug`, are not expanded, so a custom type built on one of them shows only the fields added to it. A type that contains itself is listed once, with a note referring back to the first occurrence in place of a second expansion.
+An object or array field has a control below its description that counts its subfields and expands to list them, each documented the way a top-level field is. An array with one member type lists that type's fields, and an array with several lists the members themselves. Sanity's own types, such as `image`, `file`, and `slug`, are not expanded, so a custom type built on one of them shows only the fields added to it. A type that contains itself is listed once, with a note referring back to the first occurrence in place of a second expansion.
 
 <br />
 
@@ -263,7 +263,7 @@ export const structure: StructureResolver = (structureBuilder, context) => {
 };
 ```
 
-The filter keeps the two Handbook document types out of a list built from every registered type, and the divider is added only when there is something to put beneath it. A Studio running several workspaces with different editors passes the workspace's own list as a third argument, since the plugin otherwise reads the list from whichever workspace was configured last.
+The filter keeps the two Handbook document types out of a list built from every registered type, and the divider is added only when there is something to show below it. A Studio running several workspaces with different editors passes the workspace's own list as a third argument, since the plugin otherwise reads the list from whichever workspace was configured last.
 
 <br />
 
@@ -271,7 +271,7 @@ The filter keeps the two Handbook document types out of a list built from every 
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/driftime/sanity-plugins/HEAD/packages/handbook/assets/handbook-groups-dark.png" />
     <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/driftime/sanity-plugins/HEAD/packages/handbook/assets/handbook-groups-light.png" />
-    <img src="https://raw.githubusercontent.com/driftime/sanity-plugins/HEAD/packages/handbook/assets/handbook-groups-light.png" alt="The Handbook singleton open in the Structure tool, showing two guide groups with reorder handles and the guides referenced in each" />
+    <img src="https://raw.githubusercontent.com/driftime/sanity-plugins/HEAD/packages/handbook/assets/handbook-groups-light.png" alt="The Handbook singleton open in the Structure tool, showing three guide groups with reorder handles and the guides referenced in each" />
   </picture>
   <p align="center"><sub><em>The Handbook singleton in the Structure tool, where groups and their order are arranged.</em></sub></p>
 </figure>
@@ -282,7 +282,7 @@ The filter keeps the two Handbook document types out of a list built from every 
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/driftime/sanity-plugins/HEAD/packages/handbook/assets/handbook-editor-dark.png" />
     <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/driftime/sanity-plugins/HEAD/packages/handbook/assets/handbook-editor-light.png" />
-    <img src="https://raw.githubusercontent.com/driftime/sanity-plugins/HEAD/packages/handbook/assets/handbook-editor-light.png" alt="The Handbook Guides list in the Structure tool beside an open guide, showing its title, description, and rich text editor" />
+    <img src="https://raw.githubusercontent.com/driftime/sanity-plugins/HEAD/packages/handbook/assets/handbook-editor-light.png" alt="The Handbook Guides list in the Structure tool beside an open guide, showing its rich text editor and toolbar" />
   </picture>
   <p align="center"><sub><em>The guides list in the Structure tool beside an open guide.</em></sub></p>
 </figure>
@@ -423,7 +423,7 @@ interface GuidePageProps {
 | `_type`       | `string`                     | both                | `handbook.handbook` for the singleton, `handbook.guide` for a guide. |
 | `groups`      | `SanityHandbookGuideGroup[]` | `handbook.handbook` | The groups in sidebar order, each with a `title` and its `guides`.   |
 | `title`       | `string`                     | `handbook.guide`    | The guide's title, shown in the sidebar and as its heading.          |
-| `description` | `string`                     | `handbook.guide`    | An optional introduction shown beneath the heading.                  |
+| `description` | `string`                     | `handbook.guide`    | An optional introduction shown below the heading.                    |
 | `content`     | `PortableTextBlock[]`        | `handbook.guide`    | The body, holding text blocks and the blocks below.                  |
 
 The blocks a body can hold each have a type of their own, and the link annotation is stored in a text block's `markDefs`. A horizontal rule, `handbook.horizontalRule`, carries no fields.
@@ -431,10 +431,10 @@ The blocks a body can hold each have a type of their own, and the link annotatio
 | Field      | Type                           | Block              | Purpose                                                                      |
 | ---------- | ------------------------------ | ------------------ | ---------------------------------------------------------------------------- |
 | `asset`    | `{ url?: string }`             | `handbook.image`   | The image, once the query resolves its reference to a URL.                   |
-| `caption`  | `string`                       | `handbook.image`   | An optional caption shown beneath the image.                                 |
+| `caption`  | `string`                       | `handbook.image`   | An optional caption shown below the image.                                   |
 | `alt`      | `string`                       | `handbook.image`   | Optional alternative text for the image.                                     |
 | `asset`    | `{ url?: string }`             | `handbook.video`   | The video, once the query resolves its reference to a URL.                   |
-| `caption`  | `string`                       | `handbook.video`   | An optional caption shown beneath the video.                                 |
+| `caption`  | `string`                       | `handbook.video`   | An optional caption shown below the video.                                   |
 | `code`     | `string`                       | `handbook.code`    | The source code.                                                             |
 | `language` | `string`                       | `handbook.code`    | The language it is highlighted as.                                           |
 | `variant`  | `SanityHandbookCalloutVariant` | `handbook.callout` | `tip`, `info`, or `warning`.                                                 |

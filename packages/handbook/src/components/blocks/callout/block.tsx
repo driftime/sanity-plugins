@@ -12,7 +12,7 @@ export type CalloutBlockProps = Omit<ComponentProps<typeof CalloutContent>, "var
   value: SanityHandbookCallout;
 };
 
-/** Overrides for a callout body, which takes the card's own text styling and leaves paragraphs unwrapped. */
+/** Overrides for callout text, which uses the card's own text style and doesn't wrap paragraphs. */
 const components: PortableTextComponents = {
   block: { normal: ({ children }) => <>{children}</> },
   marks: {

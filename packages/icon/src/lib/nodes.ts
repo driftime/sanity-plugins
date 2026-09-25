@@ -1,20 +1,16 @@
 import { isDefined, isRecord } from "@repo/lib/utils";
 import { stegaClean } from "@sanity/client/stega";
 
-/** Elements an icon's drawing may be built from, narrowed to those that describe a shape. */
+/** SVG elements a drawing may contain, limited to those that draw shapes. */
 const iconElements = ["circle", "ellipse", "g", "line", "path", "polygon", "polyline", "rect"] as const;
 
-/** Single shape in an icon's drawing, paired with the attributes it is drawn with. */
+/** One shape in a drawing, with its attributes. */
 type IconElement = [element: (typeof iconElements)[number], attributes: Record<string, string>];
 
-/** An icon's drawing, held as the shapes it is built from rather than as a component. */
+/** An icon's drawing, stored as a list of shapes rather than a component. */
 export type IconNode = IconElement[];
 
-/**
- * Attributes given to the SVG an icon's shapes are drawn inside, mirroring the grid and stroke Lucide
- * draws on. A library working to different conventions would need its own frame, which is why a
- * stored icon carries only what sits inside this one.
- */
+/** Attributes for the SVG around an icon's shapes, matching Lucide's grid and stroke. Stored icons omit it. */
 export const iconRootAttributes = {
   xmlns: "http://www.w3.org/2000/svg",
   width: 24,
@@ -28,8 +24,7 @@ export const iconRootAttributes = {
 } as const;
 
 /**
- * Checks whether a parsed value is an icon's drawing, since it arrives as whatever happened to be
- * stored. Shapes are matched against the known elements so nothing else reaches the renderer.
+ * Checks whether a parsed value is a drawing, letting only known shape elements through to the renderer.
  *
  * @param value - The value to check.
  * @returns True if the value is a drawing.
@@ -47,19 +42,17 @@ function isIconNode(value: unknown): value is IconNode {
 }
 
 /**
- * Reads an icon's drawing from an already-parsed value, for a library handing over its drawings as
- * data rather than as a document field.
+ * Reads a drawing from an already parsed value, such as the library's own data.
  *
  * @param value - The value to read.
- * @returns The drawing, or undefined when the value is not one.
+ * @returns The drawing, or undefined when the value isn't one.
  */
 export function parseIconNode(value: unknown) {
   return isIconNode(value) ? value : undefined;
 }
 
 /**
- * Reads an icon's drawing back from the form it is stored in, clearing the stega characters a Sanity
- * fetch leaves behind.
+ * Reads a drawing back from its stored form, removing stega characters first.
  *
  * @param value - The stored drawing.
  * @returns The drawing, or undefined when nothing readable was stored.
@@ -78,11 +71,10 @@ export function resolveIconNode(value: string | undefined) {
 }
 
 /**
- * Writes an icon's drawing into the form it is stored in, so the shapes survive a round trip through
- * a document rather than a component reference that only resolves at build time.
+ * Converts a drawing to its stored form.
  *
- * @param node - The drawing to store.
- * @returns The drawing ready to store.
+ * @param node - The drawing.
+ * @returns The drawing as a string.
  */
 export function serializeIconNode(node: IconNode) {
   return JSON.stringify(node);

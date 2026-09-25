@@ -7,10 +7,9 @@ import { fetchQuery } from "@/lib/groq";
 import type { SanityHandbook } from "@/types";
 
 /**
- * Fetches the Handbook singleton from the dataset with its guide references expanded, refetching
- * whenever one of the documents it draws on changes.
+ * Fetches the Handbook document with its guides expanded, refetching when any Handbook document changes.
  *
- * @returns The Handbook and a flag for whether it is still loading.
+ * @returns The Handbook document, and whether it's still loading.
  */
 export function useHandbookDocument() {
   const client = useClient({ apiVersion });

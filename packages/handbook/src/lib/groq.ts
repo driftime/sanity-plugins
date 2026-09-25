@@ -1,25 +1,24 @@
 import type { SanityClient } from "sanity";
 
-/** A GROQ query string branded with the shape of the data it returns. */
+/** GROQ query string that carries the type of its result. */
 type TypedQuery<T> = string & { readonly __result?: T };
 
 /**
- * Brands a GROQ query with the shape of the data it returns, so a fetch can infer its result type
- * instead of being told it at every call site.
+ * Defines a GROQ query typed with its result, so fetches infer the result type.
  *
- * @param query - The GROQ query string.
- * @returns The query, typed to the given result shape.
+ * @param query - The GROQ query.
+ * @returns The query, typed with its result.
  */
 export function defineTypedQuery<T>(query: string): TypedQuery<T> {
   return query;
 }
 
 /**
- * Runs a branded query against the dataset, resolving a missing document to undefined.
+ * Runs a typed query, returning undefined instead of null when nothing matches.
  *
- * @param client - The Sanity client to query with.
- * @param query - The branded query to run.
- * @returns The result, or undefined when the query matched nothing.
+ * @param client - The Sanity client.
+ * @param query - The typed query.
+ * @returns The result, or undefined when nothing matches.
  */
 export async function fetchQuery<T>(client: SanityClient, query: TypedQuery<T>) {
   return (await client.fetch<T | null>(query)) ?? undefined;

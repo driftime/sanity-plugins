@@ -1,31 +1,30 @@
 /**
- * One color a palette offers.
+ * A color in a palette.
  *
  * @public
  */
 export interface SanityColorEntry<TName extends string = string> {
-  /** How the color is named to an author. */
+  /** Name shown to authors. */
   label: string;
-  /** What the color paints, written as hex, RGB, or OKLCH. */
+  /** The color, as hex, RGB, or OKLCH. */
   value: string;
-  /** Color paired as text on it, named from the palette. */
+  /** Palette color used for text on this one. */
   contrast: TName;
-  /** Whether to keep the color out of the picker. It may still be named as another color's pairing. */
+  /** Whether to hide the color from the picker. It can still be another color's `contrast`. */
   hidden?: boolean;
 }
 
 /**
- * The colors a palette offers, keyed by the name each one is chosen and stored by.
+ * Palette colors, keyed by the name each is stored under.
  *
  * @public
  */
 export type SanityColorPalette<TName extends string = string> = Record<TName, SanityColorEntry<TName>>;
 
 /**
- * Declares a palette, tying every `contrast` to a name the palette offers. It returns what it was
- * given: the checking is the point, and needs the keys inferred before it can happen.
+ * Defines a palette, type-checking that every `contrast` names a color in it.
  *
- * @param palette - The colors the palette offers.
+ * @param palette - The palette colors.
  * @returns The palette, unchanged.
  * @public
  */

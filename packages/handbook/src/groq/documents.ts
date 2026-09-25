@@ -3,7 +3,7 @@ import { defineTypedQuery } from "@/lib/groq";
 import type { SanityHandbook, SanityHandbookGuide } from "@/types";
 import { guideTypeName, handbookTypeName } from "@/types";
 
-/** Fetches the Handbook singleton with expanded guide references. */
+/** Handbook document with its guide references expanded. */
 export const handbookQuery = defineTypedQuery<SanityHandbook>(`
   *[_type == "${handbookTypeName}"][0] {
     ...,
@@ -17,7 +17,7 @@ export const handbookQuery = defineTypedQuery<SanityHandbook>(`
   }
 `);
 
-/** Matches the documents whose changes the Handbook tool refetches on. */
+/** Handbook and guide documents, listened to so the tool refetches when they change. */
 export const handbookDocumentsQuery = defineTypedQuery<SanityHandbook | SanityHandbookGuide>(
   `*[_type == "${handbookTypeName}" || _type == "${guideTypeName}"]`,
 );

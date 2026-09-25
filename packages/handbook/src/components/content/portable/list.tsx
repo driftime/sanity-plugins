@@ -1,6 +1,6 @@
 import type { CSSProperties, ComponentProps } from "react";
 
-// `ref` is dropped because the element rendered varies, so a ref typed to either list element would be wrong.
+// `ref` is omitted because the rendered element varies, so no single ref type fits.
 export type PortableListProps = Omit<ComponentProps<"ul">, "ref"> & {
   ordered?: boolean;
 };

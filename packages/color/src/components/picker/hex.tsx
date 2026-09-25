@@ -11,7 +11,7 @@ export type HexProps = Omit<ComponentProps<typeof TextInput>, "value" | "onChang
 };
 
 export function Hex({ value, onSelect, ...props }: HexProps) {
-  // Separate from the stored colour so a half-typed code is not overwritten by the last valid one.
+  // Kept apart from the stored colour so a half-typed code isn't replaced by the last valid one.
   const [draft, setDraft] = useState<string>();
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
@@ -29,7 +29,7 @@ export function Hex({ value, onSelect, ...props }: HexProps) {
       fontSize={1}
       maxLength={7}
       style={{ width: "6rem" }}
-      aria-label="Custom color as a hex code"
+      aria-label="Custom color hex code"
       {...props}
     />
   );

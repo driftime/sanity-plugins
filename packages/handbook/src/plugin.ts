@@ -19,87 +19,89 @@ import { handbookType } from "@/schemas/types/handbook";
 
 declare module "@sanity/types" {
   interface FieldDefinitionBase {
+    /** Handbook documentation for the field. */
     handbook?: SanityHandbookMetadata;
   }
 
   // oxlint-disable-next-line no-shadow -- Module augmentation intentionally redeclares the imported type.
   interface DocumentDefinition {
+    /** Handbook documentation for the document type. */
     handbook?: SanityHandbookMetadata;
   }
 }
 
 /**
- * Documentation a schema author attaches to a field or document, shown wherever the Handbook renders it.
+ * Documentation added to a field or document definition, shown in the Handbook.
  *
  * @public
  */
 export interface SanityHandbookMetadata {
-  /** Display title override for the field or document. */
+  /** Title to show instead of the schema title. */
   title?: string;
-  /** Description shown beneath the field or document heading. */
+  /** Description shown below the field or document heading. */
   description?: string;
-  /** Illustrative example value for the field. */
+  /** Example value for the field. */
   example?: string;
-  /** Helpful tip displayed as a popover hint. */
+  /** Tip, shown as a hint icon. */
   tip?: string;
-  /** Informational note displayed as a popover hint. */
+  /** Extra information, shown as a hint icon. */
   info?: string;
-  /** Warning displayed as a popover hint. */
+  /** Warning, shown as a hint icon. */
   caution?: string;
 }
 
 /**
- * A named part a set of document types plays in the content model, shown as one sidebar section.
+ * A group of document types with the same role in the content model, shown as one sidebar section.
  *
  * @public
  */
 export interface SanityHandbookDocumentRole {
-  /** Display title for the document role. */
+  /** Role title. */
   title: string;
-  /** Brief description of the role's purpose. */
+  /** Short description of the role. */
   description?: string;
-  /** Document definitions filling this role. */
+  /** Document definitions in the role. */
   documents: DocumentDefinition[];
 }
 
 /**
- * A Portable Text block a consumer adds to guide content, pairing its schema with how it renders.
+ * A custom Portable Text block for guides: its schema and the component that renders it.
  *
  * @public
  */
 export interface SanityHandbookBlockDefinition {
-  /** Sanity schema type definition for the custom block. */
+  /** Schema type definition for the block. */
   schema: SchemaTypeDefinition;
-  /** React component for rendering the block in the Handbook viewer. */
+  /** Component that renders the block in the Handbook. */
   component: ComponentType<{ value: PortableTextObject }>;
 }
 
 /**
- * Everything the plugin accepts, of which only the document roles are required.
+ * Plugin configuration. Only `roles` is required.
  *
  * @public
  */
 export interface SanityHandbookConfig {
-  /** Title shown in the Studio tool navigation. `"Handbook"` when omitted. */
+  /** Title in the Studio's tool menu. Defaults to `"Handbook"`. */
   title?: string;
-  /** Heading displayed at the top of the sidebar. `"Handbook"` when omitted. */
+  /** Heading at the top of the sidebar. Defaults to `"Handbook"`. */
   sidebarTitle?: string;
-  /** Document roles, each shown as a labelled section in the sidebar. */
+  /** Document roles, each shown as a section in the sidebar. */
   roles: SanityHandbookDocumentRole[];
-  /** Custom Portable Text block definitions for guide content. None when omitted. */
+  /** Custom Portable Text blocks for guides. Defaults to none. */
   blocks?: SanityHandbookBlockDefinition[];
-  /** Email addresses permitted to edit Handbook documents. Everyone when omitted. */
+  /** Email addresses of the people who can edit Handbook documents. Defaults to everyone. */
   editors?: string[];
-  /** Fallback message shown when a field has no description. A prompt to ask the development team when omitted. */
+  /** Message shown for fields without a description. Defaults to a prompt to ask the development team. */
   undocumentedFieldMessage?: string;
 }
 
 /**
- * Creates a Handbook tool for Sanity Studio, generating documentation from document type schemas
- * alongside the Portable Text guides authored in the dataset.
+ * Adds a Handbook tool to Sanity Studio, with documentation generated from the schema and guides written
+ * in the Studio.
  *
- * @param config - Plugin configuration.
- * @returns Sanity plugin definition.
+ * @param config - The plugin configuration.
+ * @returns The plugin.
  * @public
  */
 export const handbookPlugin = definePlugin<SanityHandbookConfig>((config) => {

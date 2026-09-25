@@ -10,7 +10,7 @@ export const horizontalRuleType = defineType({
   name: horizontalRuleTypeName satisfies SanityHandbookHorizontalRule["_type"],
   type: "object",
   title: "Horizontal Rule",
-  description: "Visual divider between sections of content.",
+  description: "Divider between sections.",
   icon: createSanityIcon(SeparatorHorizontalIcon),
   components: {
     preview: HorizontalRulePreview,
@@ -23,11 +23,11 @@ export const horizontalRuleType = defineType({
     },
   },
   fields: [
-    // Sanity rejects an object type declaring no fields, and a rule has nothing of its own to store.
+    // Sanity requires at least one field, but a rule has nothing to store.
     defineField({
       name: "style",
       type: "string",
-      description: "Reserved. A horizontal rule carries no authored content.",
+      description: "Unused placeholder field.",
       hidden: true,
     }),
   ],

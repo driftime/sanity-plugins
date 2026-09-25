@@ -4,11 +4,11 @@ import { Flex, Stack, Text } from "@sanity/ui";
 import { hintKinds } from "@/config/hints";
 import { contentSpacing } from "@/config/layout";
 
-/** What each hint kind signals to an editor, shown as a legend alongside its icon. */
+/** What each hint kind means, shown next to its icon as a key. */
 const hintDescriptions = {
-  tip: "Helpful tips and best practices for content editors.",
-  info: "Additional context about how the field is used.",
-  caution: "Important warnings about constraints or potential issues.",
+  tip: "Tips and suggested practices for people editing content.",
+  info: "More detail about how and where the field is used.",
+  caution: "Warnings about restrictions or problems the field can cause.",
 } satisfies Record<(typeof hintKinds)[number]["name"], string>;
 
 export function HowToUse() {
@@ -21,9 +21,9 @@ export function HowToUse() {
           </Text>
         </Flex>
         <Text size={1} muted>
-          The sidebar lists everything the Handbook holds: these introductory pages, then the document types you can
-          create, grouped by the role they play on the site, and finally any guides your team has written. Selecting an
-          entry opens it here.
+          The sidebar lists everything in the Handbook: these introductory pages first, then the document types you can
+          create, grouped by their role on the site, and then any guides your team has written. Select an entry to open
+          it here.
         </Text>
       </Stack>
       <Stack gap={3}>
@@ -33,9 +33,8 @@ export function HowToUse() {
           </Text>
         </Flex>
         <Text size={1} muted>
-          Selecting a document type lists its fields, each showing its name, the kind of value it holds, and what the
-          field is for. The documentation is generated from the content model, so what you read always matches what you
-          see while editing.
+          Selecting a document type lists its fields, with each field’s name, the kind of value it holds, and what it’s
+          for. This documentation is generated from the content model, so it always matches what you see in the editor.
         </Text>
       </Stack>
       <Stack gap={3}>
@@ -45,8 +44,8 @@ export function HowToUse() {
           </Text>
         </Flex>
         <Text size={1} muted>
-          Icons beside a field name carry the guidance that would crowd its description if written into it. Hover or
-          click one to read what it says, and use the key below to tell the three kinds apart.
+          Icons next to a field’s name hold extra guidance that would make its description too long. Hover over or click
+          an icon to read it, and use the key below to see what each icon means.
         </Text>
         <Stack gap={3} marginTop={2}>
           {hintKinds.map(({ name, icon: Icon }) => (
@@ -68,8 +67,8 @@ export function HowToUse() {
           </Text>
         </Flex>
         <Text size={1} muted>
-          Some fields hold subfields of their own, such as a content block pairing a heading with body text. A control
-          beneath the description counts them and expands to show each one, documented exactly as a top-level field is.
+          Some fields contain subfields, such as a content block with a heading and body text. A button below the
+          description shows how many there are and expands to list them, each documented like any other field.
         </Text>
       </Stack>
       <Stack gap={3}>
@@ -79,9 +78,9 @@ export function HowToUse() {
           </Text>
         </Flex>
         <Text size={1} muted>
-          Beneath the document types you may find guides, written by your team rather than generated from the content
-          model. They carry what a field description cannot: house style, editorial process, and how all the pieces fit
-          together.
+          Below the document types, you may find guides written by your team rather than generated from the content
+          model. They cover things a field description can’t, such as house style, editorial process, and how everything
+          fits together.
         </Text>
       </Stack>
     </div>

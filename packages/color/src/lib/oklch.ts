@@ -1,12 +1,12 @@
 import { isDefined } from "@repo/lib/utils";
 
-/** Matches an OKLCH color, taking lightness as either a fraction or a percentage. */
+/** Matches an OKLCH color, with lightness as a fraction or a percentage. */
 const oklchPattern =
   /^oklch\(\s*(?<lightness>\d*\.?\d+)(?<percent>%?)\s+(?<chroma>\d*\.?\d+)\s+(?<hue>\d*\.?\d+)\s*\)$/u;
 
 /**
- * Reads an OKLCH color as its three linear channels. A color outside what a display can show is
- * left out of range here and brought back only when it is written out.
+ * Reads an OKLCH color as linear RGB channels. Out-of-gamut colors stay out of range here and are
+ * clamped when formatted.
  *
  * @param value - The OKLCH color.
  * @returns The red, green, and blue channels, or undefined when the color is malformed.
@@ -33,10 +33,10 @@ export function parseOklch(value: string) {
 }
 
 /**
- * Writes three linear channels as an OKLCH color.
+ * Formats linear RGB channels as an OKLCH color.
  *
  * @param channels - The red, green, and blue channels.
- * @returns The OKLCH color.
+ * @returns The OKLCH color, or undefined when a channel is missing.
  */
 export function formatOklch(channels: number[]) {
   const [red, green, blue] = channels;
@@ -52,7 +52,7 @@ export function formatOklch(channels: number[]) {
 
   const chroma = Number(Math.hypot(greenRed, blueYellow).toFixed(4));
 
-  // A grey's hue is floating-point residue, and would write one grey several ways if kept.
+  // A grey's hue is only floating-point noise, so it's zeroed to keep each grey's output consistent.
   const hue = chroma === 0 ? 0 : ((Math.atan2(blueYellow, greenRed) * 180) / Math.PI + 360) % 360;
 
   return `oklch(${String(Number(lightness.toFixed(4)))} ${String(chroma)} ${String(Number(hue.toFixed(2)))})`;

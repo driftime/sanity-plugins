@@ -9,12 +9,12 @@ import type { SanityColorConfig, SanityColorOptions } from "@/plugin";
 import { colorSwatchNames } from "@/types";
 
 /**
- * Settles what a color field offers. Lists replace what the plugin was given, so one line is the
- * whole answer; the objects beside them merge key by key.
+ * Resolves a color field's settings. A field's own lists replace the plugin's, while settings objects
+ * merge key by key.
  *
- * @param options - Options the field itself was given.
- * @param config - Configuration the plugin was given.
- * @returns The settings the field runs on.
+ * @param options - The field's options.
+ * @param config - The plugin configuration.
+ * @returns The field's settings.
  */
 export function resolveColorOptions(options: SanityColorOptions | undefined, config: SanityColorConfig) {
   return {

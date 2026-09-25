@@ -11,11 +11,10 @@ import type { SanityLinkSearchParam } from "@/types";
 import { searchParamTypeName } from "@/types";
 
 /**
- * Reads a row's pair, which arrives as the bare keyed item the array input is typed with rather than
- * as the parameter it holds.
+ * Reads the name and value from a stored row, which the array input only types as a keyed item.
  *
  * @param param - The stored row.
- * @returns The name and value the row carries, either of which may be unwritten.
+ * @returns The row's name and value, either of which may be undefined.
  */
 function readParam(param: { _key: string }) {
   return {

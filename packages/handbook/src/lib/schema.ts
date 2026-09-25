@@ -1,43 +1,43 @@
 import { isDefined, isRecord, readPath } from "@repo/lib/utils";
 import type { FieldDefinition, Schema } from "sanity";
 
-/** A schema field as Sanity compiles it, with its type resolved to an object rather than a name. */
+/** A schema field as Sanity compiles it, with its type resolved to an object. */
 interface CompiledField {
-  /** Field identifier in the schema. */
+  /** Field name. */
   name: string;
-  /** Resolved type object containing the type name and base type metadata. */
+  /** Resolved type, with its name and base type details. */
   type: { name: string; title?: string; description?: string; fields?: unknown[]; of?: unknown[] };
-  /** Custom title set directly on inline object definitions. */
+  /** Title set on an inline object definition. */
   title?: string;
-  /** Custom description set directly on inline object definitions. */
+  /** Description set on an inline object definition. */
   description?: string;
-  /** Fields defined directly on inline object definitions. */
+  /** Fields defined on an inline object definition. */
   fields?: unknown[];
-  /** Array members defined directly on inline array definitions. */
+  /** Members defined on an inline array definition. */
   of?: unknown[];
-  /** Optional Handbook metadata annotations for this field. */
+  /** Handbook documentation for the field. */
   handbook?: FieldDefinition["handbook"];
 }
 
-/** A schema field flattened into the shape the Handbook renders, with its type collapsed to a name. */
+/** A schema field in the shape the Handbook renders, with its type reduced to a name. */
 export interface NormalizedField {
-  /** Field identifier in the schema. */
+  /** Field name. */
   name: string;
-  /** Resolved type name. */
+  /** Type name. */
   type: string;
-  /** Display title, falling back to the one declared on the base type. */
+  /** Title, falling back to the base type's. */
   title?: string;
-  /** Description, falling back to the one declared on the base type. */
+  /** Description, falling back to the base type's. */
   description?: string;
-  /** Optional Handbook metadata annotations for this field. */
+  /** Handbook documentation for the field. */
   handbook?: FieldDefinition["handbook"];
-  /** Normalised subfields, present on object types. */
+  /** Subfields, on object types. */
   fields?: NormalizedField[];
-  /** Normalised members, present on array types. */
+  /** Members, on array types. */
   of?: NormalizedField[];
 }
 
-/** Schema type names treated as leaf types whose subfields are not displayed. */
+/** Types whose subfields aren't shown. */
 const opaqueTypes = new Set([
   "block",
   "boolean",
@@ -55,7 +55,7 @@ const opaqueTypes = new Set([
   "url",
 ]);
 
-/** Fields injected by Sanity's built-in opaque types during schema compilation. */
+/** Fields Sanity adds to its built-in types when compiling the schema. */
 const inheritedFieldNames: Partial<Record<string, Set<string>>> = {
   block: new Set(["children", "level", "listItem", "markDefs", "style"]),
   file: new Set(["asset", "media"]),
@@ -65,7 +65,7 @@ const inheritedFieldNames: Partial<Record<string, Set<string>>> = {
 };
 
 /**
- * Checks whether a value is a compiled schema field with a nested type object.
+ * Checks whether a value is a compiled schema field with a type object.
  *
  * @param value - The value to check.
  * @returns True if the value is a compiled field.
@@ -78,30 +78,30 @@ function isCompiledField(value: unknown): value is CompiledField {
 }
 
 /**
- * Checks whether a value has a `fields` array property.
+ * Checks whether a value has a `fields` array.
  *
  * @param value - The value to check.
- * @returns True if the value contains a `fields` array.
+ * @returns True if the value has a `fields` array.
  */
 function hasFieldsArray(value: unknown): value is { fields: unknown[] } {
   return isRecord(value) && Array.isArray(value["fields"]);
 }
 
 /**
- * Checks whether a value has an `of` array property.
+ * Checks whether a value has an `of` array.
  *
  * @param value - The value to check.
- * @returns True if the value contains an `of` array.
+ * @returns True if the value has an `of` array.
  */
 function hasOfArray(value: unknown): value is { of: unknown[] } {
   return isRecord(value) && Array.isArray(value["of"]);
 }
 
 /**
- * Extracts the type name a value declares, where it names one at all.
+ * Reads the type name a value declares.
  *
- * @param value - The value to inspect.
- * @returns The type name, or undefined when the value declares none.
+ * @param value - The value.
+ * @returns The type name, or undefined when there isn't one.
  */
 function getTypeName(value: unknown) {
   const typeName = readPath(value, ["type"]);
@@ -110,10 +110,10 @@ function getTypeName(value: unknown) {
 }
 
 /**
- * Extracts the parent type name from a compiled schema type, if present.
+ * Reads the parent type name from a compiled schema type.
  *
- * @param resolvedType - The compiled schema type to inspect.
- * @returns The parent type name, or undefined when the type extends none.
+ * @param resolvedType - The compiled schema type.
+ * @returns The parent type name, or undefined when there isn't one.
  */
 function getParentTypeName(resolvedType: unknown) {
   const parentName = readPath(resolvedType, ["type", "name"]);
@@ -122,11 +122,11 @@ function getParentTypeName(resolvedType: unknown) {
 }
 
 /**
- * Normalises a compiled schema field into the shape the Handbook renders. Type names already seen are
- * tracked so a type that refers back to itself does not recurse forever.
+ * Converts a compiled schema field into the shape the Handbook renders. Types already seen are tracked,
+ * so a type that refers to itself doesn't recurse forever.
  *
- * @param field - A compiled schema field or plain field definition.
- * @param visited - Type names already seen in this normalisation chain.
+ * @param field - A compiled field or a plain field definition.
+ * @param visited - Type names already seen.
  * @returns The normalised field.
  */
 function normalizeField(field: unknown, visited = new Set<string>()) {
@@ -161,12 +161,11 @@ function normalizeField(field: unknown, visited = new Set<string>()) {
 }
 
 /**
- * Resolves only the fields a custom type adds on top of an opaque base type, leaving out the ones the
- * base type contributes of its own accord.
+ * Lists the fields a custom type adds to an opaque base type, leaving out the base type's own.
  *
  * @param resolvedType - The compiled or normalised schema type.
- * @param parentName - The opaque base type name.
- * @returns The custom fields, or undefined when none of them holds a value.
+ * @param parentName - The opaque base type's name.
+ * @returns The custom fields, or undefined when there are none.
  */
 function resolveCustomFields(resolvedType: unknown, parentName: string) {
   if (!hasFieldsArray(resolvedType)) return undefined;
@@ -181,10 +180,10 @@ function resolveCustomFields(resolvedType: unknown, parentName: string) {
 }
 
 /**
- * Normalises a list of raw field values into the shape the Handbook renders.
+ * Normalises a list of raw fields.
  *
- * @param items - Raw field values to normalise.
- * @returns The normalised fields, or undefined when none of them holds a value.
+ * @param items - The raw fields.
+ * @returns The normalised fields, or undefined when there are none.
  */
 function resolveNormalizedFields(items: unknown[]) {
   const normalized = items.map((item) => normalizeField(item));
@@ -193,10 +192,10 @@ function resolveNormalizedFields(items: unknown[]) {
 }
 
 /**
- * Normalises array members and filters out opaque types that have no meaningful subfields.
+ * Normalises array members, leaving out opaque types.
  *
- * @param members - Raw array member values to normalise.
- * @returns The normalised non-opaque members, or undefined when none of them holds a value.
+ * @param members - The raw array members.
+ * @returns The normalised members, or undefined when there are none.
  */
 function resolveNormalizedMembers(members: unknown[]) {
   const normalized = members.map((member) => normalizeField(member)).filter((member) => !opaqueTypes.has(member.type));
@@ -205,12 +204,11 @@ function resolveNormalizedMembers(members: unknown[]) {
 }
 
 /**
- * Resolves the name of the type a value extends, reaching into the schema registry when the value
- * carries nothing but a type name of its own.
+ * Works out a value's parent type name, looking it up in the schema when the value only names its type.
  *
- * @param value - The value to inspect.
- * @param schema - The Sanity schema registry.
- * @returns The parent type name, or undefined when the value extends none.
+ * @param value - The value.
+ * @param schema - The Sanity schema.
+ * @returns The parent type name, or undefined when there isn't one.
  */
 function resolveParentName(value: unknown, schema: Schema) {
   const direct = getParentTypeName(value);
@@ -224,12 +222,12 @@ function resolveParentName(value: unknown, schema: Schema) {
 }
 
 /**
- * Extracts the fields a value displays, whether it carries them directly, carries array members that
- * do, or names a type that does.
+ * Works out the fields a value shows, whether it holds them directly, has array members that do, or
+ * names a type that does.
  *
- * @param value - The value to extract fields from.
- * @param schema - The Sanity schema registry.
- * @returns The resolved fields, or undefined when the value has none.
+ * @param value - The value.
+ * @param schema - The Sanity schema.
+ * @returns The fields, or undefined when there are none.
  */
 function resolveFields(value: unknown, schema: Schema) {
   if (hasFieldsArray(value)) {
@@ -266,11 +264,11 @@ function resolveFields(value: unknown, schema: Schema) {
 }
 
 /**
- * Resolves the displayable subfields of a field definition by traversing the schema.
+ * Works out a field's visible subfields by looking through the schema.
  *
- * @param field - The parent field definition.
- * @param schema - The Sanity schema registry.
- * @returns The non-opaque subfields, or undefined when the field has none.
+ * @param field - The field.
+ * @param schema - The Sanity schema.
+ * @returns The subfields, or undefined when there are none.
  */
 export function getSubfields(field: FieldDefinition | NormalizedField, schema: Schema) {
   if (opaqueTypes.has(field.type)) return undefined;

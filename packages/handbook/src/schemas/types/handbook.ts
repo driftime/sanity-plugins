@@ -11,7 +11,7 @@ export const handbookType = defineType({
   name: handbookTypeName satisfies SanityHandbook["_type"],
   type: "document",
   title: "Handbook",
-  description: "Defines the groups of guides shown in the Handbook sidebar, and the order they appear in.",
+  description: "Groups of guides shown in the Handbook sidebar, in order.",
   icon: createSanityIcon(BookTextIcon),
   preview: {
     prepare() {
@@ -25,24 +25,24 @@ export const handbookType = defineType({
       name: "groups" satisfies keyof SanityHandbook,
       type: "array",
       description:
-        "Ordered list of groups displayed in the Handbook sidebar. Each group contains a title and an ordered list of guide references.",
+        "Groups of guides shown in the Handbook sidebar, in order. Each group has a title and a list of guides, also in order.",
       of: [
         defineArrayMember({
           name: "group",
           type: "object",
-          description: "Named section of the Handbook sidebar holding an ordered list of guides.",
+          description: "Sidebar section holding a list of guides.",
           icon: createSanityIcon(ListPlusIcon),
           fields: [
             defineField({
               name: "title" satisfies keyof SanityHandbookGuideGroup,
               type: "string",
-              description: "Heading displayed above this group of guides in the sidebar.",
+              description: "Heading shown above the group in the sidebar.",
               validation: (rule) => rule.required(),
             }),
             defineField({
               name: "guides" satisfies keyof SanityHandbookGuideGroup,
               type: "array",
-              description: "Ordered list of guides within this group. Drag to reorder.",
+              description: "Guides in the group, in order. Drag to reorder.",
               of: [
                 defineArrayMember({
                   name: "guide",

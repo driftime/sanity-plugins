@@ -5,21 +5,21 @@ import { useDocumentPreviewStore } from "sanity";
 import { getLocalDetail, getReferencedId } from "@/lib/summary";
 import type { SanityLink } from "@/types";
 
-/** What was read, kept with the destination it was read for so a stale answer is never shown. */
+/** A fetched description, kept with its destination so an outdated one is never shown. */
 interface ReadDetail {
-  /** Identifier of the destination the description was read for. */
+  /** ID of the destination the description belongs to. */
   id: string;
-  /** Description of where the link leads, absent when the destination holds nothing to read. */
+  /** Description of the destination, or undefined when there's nothing to show. */
   detail?: string;
 }
 
 /**
- * Describes where a link leads, reading the title or filename held by the document it points at.
- * Read through the Studio's preview store, so links share one subscription and a rename updates them.
+ * Describes where a link leads, using the title or filename of the document it points to. It reads
+ * through the Studio's preview store, so it updates when that document changes.
  *
- * @param value - The link being authored.
- * @param titleField - Field an internal link's destination holds its title in.
- * @returns Where the link leads, or undefined while it is being read or when there is nothing to read.
+ * @param value - The link being edited.
+ * @param titleField - The field a linked page's title is read from.
+ * @returns The description, or undefined while loading or when there's nothing to show.
  */
 export function useDestinationDetail(value: Partial<SanityLink> | undefined, titleField: string) {
   const previewStore = useDocumentPreviewStore();
@@ -33,7 +33,7 @@ export function useDestinationDetail(value: Partial<SanityLink> | undefined, tit
   useEffect(() => {
     if (!isDefined(id)) return undefined;
 
-    // Held under its own name so the closure below keeps the narrowing the guard above established.
+    // Copied to a constant so the closure below keeps the guard's narrowing.
     const destinationId = id;
     const path = (isFile ? "originalFilename" : titleField).split(".");
 

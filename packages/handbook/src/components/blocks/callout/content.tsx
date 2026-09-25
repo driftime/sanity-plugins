@@ -8,11 +8,11 @@ import { LightbulbIcon } from "@/icons/lightbulb";
 import { TriangleAlertIcon } from "@/icons/triangle-alert";
 import type { SanityHandbookCalloutVariant } from "@/types";
 
-/** How a callout variant is presented, pairing its icon with the tone the card is drawn in. */
+/** Icon and card tone for a callout variant. */
 interface CalloutVariantStyle {
-  /** Icon identifying the variant. */
+  /** Icon for the variant. */
   icon: ComponentType<ComponentProps<"svg">>;
-  /** Card tone carrying the variant's intent. */
+  /** Card tone for the variant. */
   tone: CardTone;
 }
 
@@ -21,7 +21,7 @@ export type CalloutContentProps = Omit<CardProps, "tone"> & {
   children: ReactNode;
 };
 
-/** Presentation for each callout variant. */
+/** Icon and tone for each callout variant. */
 const presentation: Record<SanityHandbookCalloutVariant, CalloutVariantStyle> = {
   tip: { icon: LightbulbIcon, tone: "positive" },
   info: { icon: InfoIcon, tone: "primary" },

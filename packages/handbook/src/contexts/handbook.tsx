@@ -7,31 +7,31 @@ import { useHandbookDocument } from "@/hooks/use-handbook-document";
 import type { SanityHandbookBlockDefinition, SanityHandbookDocumentRole } from "@/plugin";
 import type { SanityHandbook } from "@/types";
 
-/** Plugin configuration with every optional value already resolved to a concrete one. */
+/** Plugin configuration with every default applied. */
 export interface HandbookProviderConfig {
-  /** Heading displayed at the top of the sidebar. */
+  /** Heading at the top of the sidebar. */
   sidebarTitle: string;
   /** Document roles from the plugin configuration. */
   roles: SanityHandbookDocumentRole[];
-  /** Custom block definitions registered by the consumer. */
+  /** Custom blocks added by the site. */
   blocks: SanityHandbookBlockDefinition[];
-  /** Fallback message shown when a field has no description. */
+  /** Message shown for fields without a description. */
   undocumentedFieldMessage: string;
 }
 
-/** Provider configuration alongside the tab and sidebar state the panes share. */
+/** Provider configuration plus the tab and sidebar state shared by the panes. */
 type HandbookContextValues = HandbookProviderConfig & {
-  /** Identifier of the currently selected tab, or undefined when none is selected. */
+  /** ID of the selected tab, or undefined when none is selected. */
   activeTab: string | undefined;
-  /** Whether the sidebar is currently expanded. */
+  /** Whether the sidebar is expanded. */
   sidebarExpanded: boolean;
-  /** Whether Handbook data is still loading from the dataset. */
+  /** Whether the Handbook document is still loading. */
   loading: boolean;
-  /** Handbook singleton fetched from the dataset. */
+  /** Handbook document fetched from the dataset. */
   handbook: SanityHandbook | undefined;
-  /** Sets the active tab by identifier. */
+  /** Selects a tab by ID. */
   setActiveTab: (id: string) => void;
-  /** Toggles the sidebar expanded state. */
+  /** Expands or collapses the sidebar. */
   setSidebarExpanded: (expanded: boolean) => void;
 };
 
@@ -42,10 +42,10 @@ export type HandbookProviderProps = HandbookProviderConfig & {
 const HandbookContext = createContext<HandbookContextValues | undefined>(undefined);
 
 /**
- * Accesses the Handbook context for tab state and plugin configuration.
+ * Reads the Handbook context.
  *
- * @returns The resolved plugin configuration alongside the state the panes share.
- * @throws If used outside the provider.
+ * @returns The plugin configuration and the shared pane state.
+ * @throws When used outside the provider.
  */
 export function useHandbookContext() {
   const handbookContext = useContext(HandbookContext);
@@ -58,10 +58,10 @@ export function useHandbookContext() {
 }
 
 /**
- * Provides the tab state the sidebar and content panes share, alongside the plugin configuration and
- * the handbook singleton fetched from the dataset.
+ * Provides the plugin configuration, the Handbook document, and the tab state shared by the sidebar and
+ * content panes.
  *
- * @returns The provider wrapping its children.
+ * @returns The provider.
  */
 export function HandbookProvider({
   sidebarTitle,

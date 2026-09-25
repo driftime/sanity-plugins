@@ -1,16 +1,15 @@
 import { isDefined } from "@repo/lib/utils";
 
-/** Matches a hex color in either its three or six digit form, with or without a leading hash. */
+/** Matches a three- or six-digit hex color, with or without a leading hash. */
 const hexPattern = /^#?(?<digits>[\da-f]{3}|[\da-f]{6})$/iu;
 
-/** Matches an RGB color, taking the modern space-separated form and the legacy comma-separated one. */
+/** Matches an RGB color in the modern space-separated form or the legacy comma-separated form. */
 const rgbPattern = /^rgb\(\s*(?<red>\d{1,3})\s*[\s,]\s*(?<green>\d{1,3})\s*[\s,]\s*(?<blue>\d{1,3})\s*\)$/u;
 
 /**
- * Removes the sRGB transfer function from a channel, giving the light it actually carries. Color
- * arithmetic is only meaningful on these linear values, never on the encoded ones.
+ * Converts an sRGB-encoded channel to linear light. Color arithmetic only works on linear values.
  *
- * @param channel - The encoded channel, between zero and one.
+ * @param channel - The encoded channel, from 0 to 1.
  * @returns The linear channel.
  */
 function toLinearChannel(channel: number) {
@@ -18,30 +17,29 @@ function toLinearChannel(channel: number) {
 }
 
 /**
- * Reapplies the sRGB transfer function to a linear channel, giving the value a display encodes.
+ * Converts a linear channel back to sRGB encoding.
  *
  * @param channel - The linear channel.
- * @returns The encoded channel, between zero and one.
+ * @returns The encoded channel, from 0 to 1.
  */
 function toGammaChannel(channel: number) {
   return channel <= 0.0031308 ? channel * 12.92 : 1.055 * Math.max(channel, 0) ** (1 / 2.4) - 0.055;
 }
 
 /**
- * Encodes three linear channels as the whole numbers a display is addressed with, bringing anything
- * outside its range back to the nearest edge.
+ * Converts linear channels to display values, clamping anything out of range.
  *
  * @param channels - The red, green, and blue channels.
- * @returns Each channel between 0 and 255.
+ * @returns Each channel from 0 to 255.
  */
 function toDisplayChannels(channels: number[]) {
   return channels.map((channel) => Math.round(Math.min(Math.max(toGammaChannel(channel), 0), 1) * 255));
 }
 
 /**
- * Reads a hex color as its three linear channels, expanding the shorthand form on the way.
+ * Reads a hex color as linear RGB channels, expanding the three-digit form.
  *
- * @param value - Hex color in either its three or six digit form, with or without a leading hash.
+ * @param value - A three- or six-digit hex color, with or without a leading hash.
  * @returns The red, green, and blue channels, or undefined when the color is malformed.
  */
 export function parseHex(value: string) {
@@ -54,9 +52,9 @@ export function parseHex(value: string) {
 }
 
 /**
- * Reads an RGB color as its three linear channels.
+ * Reads an RGB color as linear channels.
  *
- * @param value - RGB color in either its space-separated or comma-separated form.
+ * @param value - An RGB color, space- or comma-separated.
  * @returns The red, green, and blue channels, or undefined when the color is malformed.
  */
 export function parseRgb(value: string) {
@@ -70,10 +68,10 @@ export function parseRgb(value: string) {
 }
 
 /**
- * Writes three linear channels as a hex color.
+ * Formats linear channels as a hex color.
  *
  * @param channels - The red, green, and blue channels.
- * @returns The six digit hex color.
+ * @returns The six-digit hex color.
  */
 export function formatHex(channels: number[]) {
   return `#${toDisplayChannels(channels)
@@ -82,7 +80,7 @@ export function formatHex(channels: number[]) {
 }
 
 /**
- * Writes three linear channels as an RGB color, in the space-separated form current CSS uses.
+ * Formats linear channels as a space-separated RGB color.
  *
  * @param channels - The red, green, and blue channels.
  * @returns The RGB color.
@@ -92,10 +90,10 @@ export function formatRgb(channels: number[]) {
 }
 
 /**
- * Measures how much light a color reflects, for weighing one color against another.
+ * Calculates a color's relative luminance, which contrast is measured from.
  *
  * @param channels - The red, green, and blue channels.
- * @returns The relative luminance.
+ * @returns The relative luminance, or undefined when a channel is missing.
  */
 export function getLuminance(channels: number[]) {
   const [red, green, blue] = channels;

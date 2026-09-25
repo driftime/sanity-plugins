@@ -4,11 +4,10 @@ import { stegaClean } from "@sanity/client/stega";
 import type { SanityLinkSearchParam } from "@/types";
 
 /**
- * Reads an internal link's parameters as the pairs a query string is built from, dropping any row
- * that names no key so a half-written parameter never reaches an address.
+ * Reads a page link's parameters as key–value pairs, skipping rows without a name.
  *
  * @param searchParams - The stored parameters.
- * @returns The parameters that name a key, or undefined when none do.
+ * @returns The named parameters, or undefined when there are none.
  */
 function readSearchParams(searchParams: SanityLinkSearchParam[] | undefined) {
   if (!isDefined(searchParams)) return undefined;
@@ -23,11 +22,11 @@ function readSearchParams(searchParams: SanityLinkSearchParam[] | undefined) {
 }
 
 /**
- * Builds the address that opens a message to a chosen inbox.
+ * Builds a `mailto:` address.
  *
- * @param email - The address the message is sent to.
- * @param subject - The subject the message opens with.
- * @returns The address, or undefined when no inbox was named.
+ * @param email - The recipient's address.
+ * @param subject - The subject line.
+ * @returns The address, or undefined when there's no recipient.
  */
 export function composeEmailHref(email: string | undefined, subject: string | undefined) {
   const address = stegaClean(email);
@@ -39,11 +38,10 @@ export function composeEmailHref(email: string | undefined, subject: string | un
 }
 
 /**
- * Builds the address that starts a call to a chosen number. Spacing an author wrote for legibility is
- * dropped, since a dialler reads none of it.
+ * Builds a `tel:` address, removing any spaces.
  *
- * @param phone - The number the call is placed to.
- * @returns The address, or undefined when no number was named.
+ * @param phone - The phone number.
+ * @returns The address, or undefined when there's no number.
  */
 export function composePhoneHref(phone: string | undefined) {
   const number = stegaClean(phone);
@@ -53,13 +51,13 @@ export function composePhoneHref(phone: string | undefined) {
 }
 
 /**
- * Appends the anchor and query string an author added onto the address a route resolved to, merging
- * with any parameters the route already carried.
+ * Adds an author's anchor and query parameters to a route's address, merging with any parameters it
+ * already has.
  *
- * @param href - The address the route resolved to.
- * @param anchor - Section of the destination page to arrive at.
- * @param searchParams - Query string parameters to append.
- * @returns The address carrying the anchor and parameters, in the same absolute or relative form it arrived in.
+ * @param href - The route's address.
+ * @param anchor - The section to link to.
+ * @param searchParams - The query parameters to add.
+ * @returns The address with the anchor and parameters, absolute or relative as it was given.
  */
 export function appendDestination(
   href: string,
@@ -70,13 +68,13 @@ export function appendDestination(
   const hash = stegaClean(anchor);
   if (!isDefined(params) && !isDefined(hash)) return href;
 
-  // Stands in for the site's own origin, so a relative address can be parsed and rebuilt as one.
+  // Placeholder origin, so a relative address can be parsed and then rebuilt as relative.
   const placeholder = "http://append.invalid";
 
   try {
     const url = new URL(href, placeholder);
 
-    // An author's own parameter wins over one the route already carried, having been written later.
+    // An author's parameter overrides the route's parameter of the same name.
     for (const [key, value] of Object.entries(params ?? {})) url.searchParams.set(key, value);
     if (isDefined(hash)) url.hash = convertCase(hash, "kebab");
 
@@ -87,10 +85,10 @@ export function appendDestination(
 }
 
 /**
- * Builds the address that moves a visitor within the page they are already reading.
+ * Builds an in-page `#` address.
  *
- * @param anchor - Section of the page to arrive at.
- * @returns The address, or undefined when no section was named.
+ * @param anchor - The section to link to.
+ * @returns The address, or undefined when there's no section.
  */
 export function composeAnchorHref(anchor: string | undefined) {
   const hash = stegaClean(anchor);

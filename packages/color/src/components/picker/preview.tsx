@@ -2,7 +2,7 @@ import { isDefined } from "@repo/lib/utils";
 import { Card, Flex, Text } from "@sanity/ui";
 import type { ComponentProps } from "react";
 
-/** Size of the specimen a pairing is shown as, matching the height of the controls beside it. */
+/** Size of the pairing sample, matching the height of the controls beside it. */
 const specimenSize = 32;
 
 export type PreviewProps = Omit<ComponentProps<typeof Card>, "children"> & {

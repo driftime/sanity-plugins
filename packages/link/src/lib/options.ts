@@ -5,16 +5,15 @@ import { getLinkType } from "@/lib/link-types";
 import type { SanityLinkConfig, SanityLinkOptions } from "@/plugin";
 import type { SanityLinkDestination } from "@/types";
 
-/** One destination as the Studio offers it, for passing an already-narrowed set around. */
+/** A kind of destination, as offered in the Studio. */
 export type LinkType = (typeof linkTypes)[number];
 
 /**
- * Settles what a link field offers. The list says what is on and replaces whatever the plugin was
- * given, so one line tells you the whole answer.
+ * Resolves the destinations a field offers. A field's own list replaces the plugin's.
  *
- * @param options - Options the field itself was given.
- * @param config - Configuration the plugin was given.
- * @returns The settings the field runs on.
+ * @param options - The field's options.
+ * @param config - The plugin configuration.
+ * @returns The field's settings.
  */
 export function resolveLinkOptions(options: SanityLinkOptions | undefined, config: SanityLinkConfig) {
   return {
@@ -23,12 +22,11 @@ export function resolveLinkOptions(options: SanityLinkOptions | undefined, confi
 }
 
 /**
- * Narrows the destinations to those on offer, in the order they were named. A name this version does
- * not recognise is skipped, and a set that leaves nothing offers them all rather than a field with
- * nowhere to point.
+ * Narrows the destinations to those offered, in the order given. Unknown names are skipped, and if none
+ * remain, every destination is offered so the field always has one.
  *
- * @param destinations - Destinations to offer.
- * @returns The destinations on offer, of which there is always at least one.
+ * @param destinations - The destinations to offer.
+ * @returns The offered destinations, always at least one.
  */
 export function getOfferedLinkTypes(destinations: SanityLinkDestination[]): [LinkType, ...LinkType[]] {
   const [offered, ...rest] = [...new Set(destinations)].flatMap((name) => {

@@ -4,15 +4,15 @@ import { stegaClean } from "@sanity/client/stega";
 import type { AnyString, SanityColorSwatch, SanityColorSwatchName, SanityImagePalette } from "@/types";
 import { colorSwatchNames } from "@/types";
 
-/** Matches a color taken from an image, capturing the swatch it names. */
+/** Matches a color taken from an image and captures the swatch name. */
 const swatchPattern = /^image:(?<swatch>[a-zA-Z]+)$/u;
 
 /**
- * Reads a color taken from an image, clearing the stega characters a Sanity fetch leaves behind.
- * The prefix is what keeps a swatch apart from a palette color of the same name.
+ * Reads an image swatch color, removing stega characters first. The `image:` prefix keeps swatches
+ * apart from palette colors with the same name.
  *
- * @param value - The color to read.
- * @returns The swatch name, or undefined when the color came from somewhere else.
+ * @param value - The stored color.
+ * @returns The swatch name, or undefined when the color isn't a swatch.
  */
 export function resolveColorSwatch(value: SanityColorSwatch | AnyString | undefined) {
   const cleaned = stegaClean(value);
@@ -24,22 +24,21 @@ export function resolveColorSwatch(value: SanityColorSwatch | AnyString | undefi
 }
 
 /**
- * Names a swatch as an author's choice of it.
+ * Converts a swatch name to its stored form.
  *
- * @param name - The swatch chosen.
- * @returns The color, ready to store.
+ * @param name - The swatch name.
+ * @returns The stored color.
  */
 export function createColorSwatch(name: SanityColorSwatchName): SanityColorSwatch {
   return `image:${name}`;
 }
 
 /**
- * Reads the swatches an image actually yielded, narrowed to those a field offers and listed in the
- * order it names them.
+ * Lists the swatches an image has, limited to those the field allows, in the field's order.
  *
- * @param palette - Palette of the image the field draws from.
- * @param allowed - Swatches the field offers.
- * @returns The swatches carrying a color, each with the color it paints.
+ * @param palette - The image's palette.
+ * @param allowed - The swatches the field allows.
+ * @returns Each available swatch with its color.
  */
 export function getAvailableSwatches(palette: SanityImagePalette | undefined, allowed: SanityColorSwatchName[]) {
   return allowed.flatMap((name) => {

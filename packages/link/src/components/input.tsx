@@ -57,7 +57,7 @@ function Destinations({ id, offered, selected, showTabs, readOnly, onSelect, chi
   );
 }
 
-/** Compiled shape of a link field, carrying the options the field itself was given. */
+/** Compiled link field type, with the field's own options. */
 interface LinkSchemaType extends ObjectSchemaType {
   options?: SanityLinkOptions;
 }
@@ -65,13 +65,12 @@ interface LinkSchemaType extends ObjectSchemaType {
 export type InputProps = ObjectInputProps<Partial<SanityLink>, LinkSchemaType>;
 
 /**
- * Builds the patches that move a link to a destination, clearing whatever the last one wrote. A
- * destination moved away from would otherwise stay in the document unseen, and reappear the moment
- * an author moved the tab back.
+ * Builds the patches that switch a link to another destination, clearing the fields the previous one set.
+ * Otherwise they'd stay hidden in the document and reappear if the author switched back.
  *
- * @param typeName - Name the link type is registered under.
- * @param type - The destination being moved to.
- * @returns The patches to apply.
+ * @param typeName - The link type's schema name.
+ * @param type - The new destination.
+ * @returns The patches.
  */
 function createDestinationPatches(typeName: string, type: SanityLinkDestination) {
   return [
@@ -82,11 +81,11 @@ function createDestinationPatches(typeName: string, type: SanityLinkDestination)
 }
 
 /**
- * Creates the input a link field is drawn with, holding what the plugin was configured with so a
- * field naming its own destinations replaces them rather than adding to them.
+ * Creates the link field input, bound to the plugin's configuration. A field's own destinations replace
+ * the plugin's rather than adding to them.
  *
- * @param titleField - Field an internal link's destination holds its title in.
- * @param config - Configuration the plugin was given.
+ * @param titleField - The field a linked page's title is read from.
+ * @param config - The plugin configuration.
  * @returns The input component.
  */
 export function createInput(titleField: string, config: SanityLinkConfig) {
@@ -105,7 +104,7 @@ export function createInput(titleField: string, config: SanityLinkConfig) {
     const summary = composeSummary(value?.label, detail) ?? stored?.label;
     const Icon = stored?.icon ?? LinkIcon;
 
-    // An object inside an array ends its path with a keyed segment, where a plain field ends with a name.
+    // An array item's path ends in a keyed segment, while a plain field's ends in a name.
     const isArrayItem = typeof path.at(-1) === "object";
 
     const showTabs = offered.length > 1;
@@ -114,7 +113,7 @@ export function createInput(titleField: string, config: SanityLinkConfig) {
       onChange(createDestinationPatches(schemaType.name, type));
     }
 
-    // An array item has no button of ours to write the standing destination, so mounting writes it.
+    // Array items don't get our button, which normally sets the destination, so it's set on mount instead.
     useEffect(() => {
       if (!isArrayItem || isDefined(stored)) return;
 
@@ -163,7 +162,7 @@ export function createInput(titleField: string, config: SanityLinkConfig) {
             onClick={() => {
               onChange(unset());
             }}
-            aria-label="Clear this link"
+            aria-label="Clear the link"
           />
         )}
         {open && (

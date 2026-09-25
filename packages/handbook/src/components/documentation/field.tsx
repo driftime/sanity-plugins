@@ -18,7 +18,7 @@ export type DocumentedFieldProps = StackProps & {
   ancestors?: Set<string>;
 };
 
-/** Shared empty ancestor set, so the default prop keeps a stable reference across renders. */
+/** Shared empty set, so the default prop keeps the same reference between renders. */
 const noAncestors = new Set<string>();
 
 export function DocumentedField({ field, ancestors = noAncestors, ...props }: DocumentedFieldProps) {

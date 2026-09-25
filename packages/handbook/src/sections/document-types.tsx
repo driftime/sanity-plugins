@@ -4,10 +4,10 @@ import { resolveDescription, resolveIcon, resolveTitle } from "@/lib/display";
 import type { SanityHandbookDocumentRole } from "@/plugin";
 
 /**
- * Builds a section for each configured document role.
+ * Builds a sidebar section for each document role.
  *
- * @param roles - Document roles from the plugin configuration.
- * @returns One section per role, holding an entry per document type.
+ * @param roles - The configured document roles.
+ * @returns One section per role, with an entry per document type.
  */
 export function documentTypesSections(roles: SanityHandbookDocumentRole[]) {
   return roles.map(({ title, documents }) => ({

@@ -1,4 +1,4 @@
-// Runs inside a consumer's server components, where the compiler's memo cache hook cannot.
+// Consumers render this in server components, where the compiler's memo cache hook can't run.
 "use no memo";
 
 import { isDefined } from "@repo/lib/utils";

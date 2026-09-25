@@ -5,38 +5,35 @@ import { logger } from "@/config/defaults";
 import type { SanityLinkDocument } from "@/types";
 
 /**
- * One entry in a site's route table, pairing the path a document is served at with the GROQ that
- * fills the parameters in it. Keys beyond these two are kept as written and mean nothing here.
+ * A route: the path a document type is served at and the GROQ that fills its parameters. Other keys are
+ * kept as written and ignored.
  *
  * @public
  */
 export interface SanityLinkRouteDefinition {
-  /** URL path pattern, in which every `[name]` segment is a parameter. */
+  /** URL path pattern, where each `[name]` segment is a parameter. */
   path: string;
-  /** GROQ expression resolving each path parameter against the documents the route renders. */
+  /** GROQ expression for each path parameter. */
   params?: Record<string, string>;
-  /** Anything else a site attaches to a route, kept as written and read by nothing here. */
+  /** Anything else the site stores on a route, ignored by the plugin. */
   [key: string]: unknown;
 }
 
 /**
- * Route definitions keyed by the document type each one renders.
+ * Route definitions keyed by document type.
  *
  * @public
  */
 export type SanityLinkRoutes = Record<string, SanityLinkRouteDefinition>;
 
-/**
- * Parameter names a path pattern declares, so `"/[category]/[slug]"` reads as `"category" | "slug"`.
- *
- */
+/** Parameter names in a path pattern, so `"/[category]/[slug]"` gives `"category" | "slug"`. */
 export type SanityLinkRouteParamNames<TPath extends string> = TPath extends `${string}[${infer TParam}]${infer TRest}`
   ? TParam | SanityLinkRouteParamNames<TRest>
   : never;
 
 /**
- * A route table checked against the patterns it declares, so every parameter a path names has a GROQ
- * expression and nothing else does.
+ * A route table type-checked against its paths, so every path parameter has a GROQ expression and nothing
+ * else does.
  *
  * @public
  */
@@ -53,7 +50,7 @@ export type SanityCheckedLinkRoutes<TRoutes extends SanityLinkRoutes> = {
 };
 
 /**
- * Every route addressable without a document, each carrying the parameters its own path declares.
+ * A route and the parameters its path needs, for linking without a document.
  *
  * @public
  */
@@ -62,11 +59,11 @@ export type SanityLinkRouteInput<TRoutes extends SanityLinkRoutes> = {
 }[keyof TRoutes & string];
 
 /**
- * Declares a route table, checking that every parameter a path names has a GROQ expression and
- * nothing else does.
+ * Defines a route table, type-checking that every path parameter has a GROQ expression and nothing else
+ * does.
  *
- * @param routes - Route definitions keyed by the document type each one renders.
- * @returns The route definitions as given.
+ * @param routes - Route definitions keyed by document type.
+ * @returns The routes, unchanged.
  * @public
  */
 export function defineLinkRoutes<const TRoutes extends SanityLinkRoutes>(
@@ -76,12 +73,12 @@ export function defineLinkRoutes<const TRoutes extends SanityLinkRoutes>(
 }
 
 /**
- * Reads a route's parameter values off a fetched document: those a query projected into `_routeParams`
- * first, then any whose GROQ is a plain field path, read directly, so a query need only project the
- * parameters that follow a reference or compute a value.
+ * Reads a route's parameter values from a fetched document: first those the query projected into
+ * `_routeParams`, then any whose GROQ is a plain field path. A query only needs to project parameters
+ * that follow a reference or compute a value.
  *
- * @param document - The document a route is being resolved for.
- * @param expressions - The GROQ expression each parameter is filled from.
+ * @param document - The document.
+ * @param expressions - The GROQ expression for each parameter.
  * @returns The parameter values that could be read.
  */
 function readDocumentParams(document: SanityLinkDocument, expressions: Record<string, string>) {
@@ -98,11 +95,11 @@ function readDocumentParams(document: SanityLinkDocument, expressions: Record<st
 }
 
 /**
- * Binds a site's route table to the functions that read it, so a path is declared once and both the
- * query filling its parameters and the resolver spending them follow the same declaration.
+ * Creates a route resolver and the GROQ fragment that fetches its parameters, both from the same route
+ * table.
  *
- * @param routes - Route definitions keyed by the document type each one renders.
- * @returns An object holding the route resolver and the GROQ that feeds it.
+ * @param routes - Route definitions keyed by document type.
+ * @returns The route resolver and the parameter fragment.
  */
 export function createRouteResolver<TRoutes extends SanityLinkRoutes>(routes: TRoutes) {
   const routeParamsFragment = Object.entries(routes)
@@ -116,9 +113,9 @@ export function createRouteResolver<TRoutes extends SanityLinkRoutes>(routes: TR
     .join(", ");
 
   /**
-   * Resolves a document, or a route named in code, into the path it is served at.
+   * Resolves a document, or a route declared in code, to its path.
    *
-   * @param destination - The document or route to resolve.
+   * @param destination - The document or route.
    * @returns The path, or undefined when the type has no route or a parameter has no value.
    */
   function resolveRoute(destination: SanityLinkRouteInput<TRoutes> | SanityLinkDocument) {
@@ -126,7 +123,7 @@ export function createRouteResolver<TRoutes extends SanityLinkRoutes>(routes: TR
     const route = routes[type];
 
     if (!isDefined(route)) {
-      logger.error(`No route is configured for the "${type}" type, so a link to it leads nowhere.`);
+      logger.error(`No route is configured for the "${type}" type, so links to it resolve to nothing.`);
 
       return undefined;
     }
@@ -143,7 +140,7 @@ export function createRouteResolver<TRoutes extends SanityLinkRoutes>(routes: TR
 
     if (isDefined(unresolved)) {
       logger.error(
-        `Could not resolve ${unresolved.join(", ")} for the "${type}" route. The fetching query must spread \`routeParamsFragment\`, and the document must hold a value for every parameter.`,
+        `Could not resolve ${unresolved.join(", ")} for the "${type}" route. The query must include \`routeParamsFragment\`, and the document needs a value for every parameter.`,
       );
 
       return undefined;

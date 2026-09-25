@@ -19,7 +19,9 @@
 
 Every link on a site is a small decision about where a visitor goes next. Link gives authors one field for all of those decisions, in the document form and inside rich text, and gives developers one type in the schema and one function on the site.
 
-Links to pages are stored as references, so they follow a page through every rename and move. The site's routes are declared once, with type checking, and from them the plugin derives the query that fetches each link and the `href` that renders it. A resolved link also knows whether it is external, whether it should open in a new tab, and whether it points at the current page, so navigation states and anchor attributes are already answered.
+Links to pages are stored as references, so they follow a page through every rename and move and never point at an old address.
+
+The site's routes are declared once, with type checking. From them, the plugin builds the query that fetches every link and the `href` that renders it. Each resolved link also knows whether it's external, whether it opens in a new tab, and whether it points at the current page, so navigation states need no extra code.
 
 <br />
 
@@ -27,16 +29,16 @@ Links to pages are stored as references, so they follow a page through every ren
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/driftime/sanity-plugins/HEAD/packages/link/assets/link-dialog-dark.png" />
     <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/driftime/sanity-plugins/HEAD/packages/link/assets/link-dialog-light.png" />
-    <img src="https://raw.githubusercontent.com/driftime/sanity-plugins/HEAD/packages/link/assets/link-dialog-light.png" alt="The link dialog in Sanity Studio on the Page tab, with tabs for each destination, a selected page, an anchor, two search parameters, and a label" />
+    <img src="https://raw.githubusercontent.com/driftime/sanity-plugins/HEAD/packages/link/assets/link-dialog-light.png" alt="The link dialog in Sanity Studio on the Page tab, with tabs for each destination, a selected page, and empty fields for an anchor, search parameters, and a label" />
   </picture>
-  <p align="center"><sub><em>The link dialog on the Page tab, with a referenced page, an anchor, search parameters, and a label.</em></sub></p>
+  <p align="center"><sub><em>The link dialog on the Page tab, with a referenced page and fields for an anchor, search parameters, and a label.</em></sub></p>
 </figure>
 
 <br />
 
 ## Installation
 
-Link is built for Sanity Studio 6.10 and React 19 and declares both as peer dependencies, so the Studio needs to be on those versions already. Node 22.12 or later is required.
+Link is built for Sanity Studio 6.10 and React 19 and declares both as peer dependencies, so the Studio needs to be on those versions already. Node 20.19 or later is required, or 22.12 or later on Node 22.
 
 ```bash
 bun add -E @driftime/sanity-plugin-link
@@ -360,14 +362,14 @@ All three sources return the same shape, so one component renders every link on 
 
 #### Output
 
-| Value                | Type                 | Purpose                                                               |
-| -------------------- | -------------------- | --------------------------------------------------------------------- |
-| `resolvedLink`       | `SanityResolvedLink` | The `href`, `label`, and `download` for the anchor, or `undefined`.   |
-| `isExternal`         | `boolean`            | Whether the `href` has a different origin from `baseUrl`.             |
-| `opensNewTab`        | `boolean`            | Whether to set `target="_blank"`.                                     |
-| `hasAnchor`          | `boolean`            | Whether the `href` has a fragment.                                    |
-| `containsActivePath` | `boolean`            | Whether the current pathname is the link's path or a path beneath it. |
-| `isActivePath`       | `boolean`            | Whether the current pathname is exactly the link's path.              |
+| Value                | Type                 | Purpose                                                             |
+| -------------------- | -------------------- | ------------------------------------------------------------------- |
+| `resolvedLink`       | `SanityResolvedLink` | The `href`, `label`, and `download` for the anchor, or `undefined`. |
+| `isExternal`         | `boolean`            | Whether the `href` has a different origin from `baseUrl`.           |
+| `opensNewTab`        | `boolean`            | Whether to set `target="_blank"`.                                   |
+| `hasAnchor`          | `boolean`            | Whether the `href` has a fragment.                                  |
+| `containsActivePath` | `boolean`            | Whether the current pathname is the link's path or a path under it. |
+| `isActivePath`       | `boolean`            | Whether the current pathname is exactly the link's path.            |
 
 `label` is the author's label, or the page's title for a page link with none. A `route` or `href` has no label. `download` is `true` for file links, and a page link's `href` includes the author's anchor and search parameters.
 

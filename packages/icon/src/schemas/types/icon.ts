@@ -11,11 +11,10 @@ import type { SanityIcon } from "@/types";
 import { iconTypeName } from "@/types";
 
 /**
- * Creates the object type an icon is stored as, offering the icons it is given to every field that
- * does not name its own.
+ * Creates the icon object type, offering the plugin's icons to fields that don't set their own.
  *
- * @param config - Configuration every field falls back to.
- * @returns An object type definition for a stored icon.
+ * @param config - The plugin configuration.
+ * @returns The icon type.
  */
 export function createIconType(config: SanityIconConfig) {
   return defineType({
@@ -23,11 +22,11 @@ export function createIconType(config: SanityIconConfig) {
     type: "object",
     icon: createSanityIcon(SquareDashedIcon),
     description: "Icon chosen from the Lucide library.",
-    // Deliberately the flat frame a primitive field gets, not the collapsible fieldset Sanity wraps an object in.
+    // Uses a primitive field's flat frame on purpose, instead of Sanity's collapsible object fieldset.
     components: { field: Field, input: createInput(config) },
     validation: (rule) =>
       rule.custom((value: Partial<SanityIcon> | undefined) =>
-        !isDefined(value?.name) || isDefined(value.node) ? true : "Select the icon again so its drawing is stored.",
+        !isDefined(value?.name) || isDefined(value.node) ? true : "Select the icon again to save its drawing.",
       ),
     preview: {
       select: {
@@ -47,12 +46,12 @@ export function createIconType(config: SanityIconConfig) {
       defineField({
         name: "name" satisfies keyof SanityIcon,
         type: "string",
-        description: "Name of the chosen icon in the library it was taken from.",
+        description: "Name of the icon in Lucide.",
       }),
       defineField({
         name: "node" satisfies keyof SanityIcon,
         type: "text",
-        description: "Shapes the icon is drawn from, written when the icon is chosen.",
+        description: "Shapes the icon is drawn from, saved when it's chosen.",
       }),
     ],
   });

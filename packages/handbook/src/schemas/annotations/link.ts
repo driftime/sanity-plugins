@@ -26,7 +26,7 @@ export const linkAnnotation = defineArrayMember({
       name: "href" satisfies keyof SanityHandbookLink,
       type: "url",
       title: "URL",
-      description: "Web address destination for this link. Supports http, https, mailto, and tel schemes.",
+      description: "Web address to link to. Use http, https, mailto, or tel.",
       validation: (rule) => rule.uri({ scheme: ["http", "https", "mailto", "tel"] }),
     }),
   ],

@@ -1,188 +1,192 @@
-/** Type name of the link object. */
+/** Schema type name of the link object. */
 export const linkTypeName = "link";
 
 /**
- * Type name a link takes as a Portable Text annotation. It is stored as `_type`, which is how the
- * label field and the resolver tell an annotated span from a link field.
+ * Schema type name of the link annotation. It's stored as `_type`, which is how the label field and the resolver
+ * tell annotations from link fields.
  */
 export const linkMarkTypeName = "linkMark";
 
-/** Type name of one search parameter on an internal link. */
+/** Schema type name of a page link's query parameter. */
 export const searchParamTypeName = "linkSearchParam";
 
-/** Kinds of destination a link may point at, in the order the Studio offers them. */
+/** Kinds of destination, in the order the Studio offers them. */
 export const linkDestinations = ["page", "anchor", "url", "email", "phone", "file"] as const;
 
 /**
- * Which kind of destination a link points at, discriminating the stored union.
+ * The kind of destination a link points to.
  *
  * @public
  */
 export type SanityLinkDestination = (typeof linkDestinations)[number];
 
 /**
- * Values filling a document's route parameters, present once a query spreads the route params fragment.
+ * A document's route parameter values, present when the query includes the route parameters fragment.
  *
  * @public
  */
 export type SanityLinkRouteParams = Record<string, string | null | undefined>;
 
 /**
- * A pointer to another document, holding the raw reference until a query expands it into the document
- * itself.
+ * Reference to a document, or the document itself once a query expands it.
  *
  * @public
  */
 export type SanityLinkReference<T> = { _ref: string } | T;
 
 /**
- * The document an internal link points at, holding as much of it as resolution reads. Narrow this to
- * a consumer's own routed document type wherever a stored link is typed.
+ * The document a page link points to, with the fields resolution reads. Narrow it to the site's own
+ * document type wherever links are typed.
  *
  * @public
  */
 export interface SanityLinkDocument {
   _id: string;
   _type: string;
-  /** Values filling this document's route parameters, absent when its query left them unfetched. */
+  /** Route parameter values, or undefined when the query didn't fetch them. */
   _routeParams?: SanityLinkRouteParams;
-  /** Title the link borrows when no label was written. */
+  /** Title used as the link text when there's no label. */
   title?: string;
 }
 
 /**
- * The file a download link serves, holding as much of it as resolution reads.
+ * The file asset a file link points to, with the fields resolution reads.
  *
  * @public
  */
 export interface SanityLinkFileAsset {
   _id: string;
   _type: string;
-  /** Address the file is served from. */
+  /** URL the file is served from. */
   url?: string;
-  /** Name the file was uploaded under, offered to the browser as the name to save it by. */
+  /** Name the file was uploaded with, used as the downloaded file's name. */
   originalFilename?: string;
 }
 
 /**
- * A file field, whose asset stays a raw reference until a query expands it.
+ * File field whose asset reference may be expanded.
  *
  * @public
  */
 export interface SanityLinkFile {
   _type: "file";
-  /** The uploaded file itself. */
+  /** The uploaded file. */
   asset?: SanityLinkReference<SanityLinkFileAsset>;
 }
 
 /**
- * One query string parameter appended to an internal link's address.
+ * A query parameter added to a page link's address.
  *
  * @public
  */
 export interface SanityLinkSearchParam {
   _type: typeof searchParamTypeName;
   _key: string;
-  /** Name the parameter is read under. */
+  /** Parameter name. */
   key?: string;
-  /** Value the parameter carries. */
+  /** Parameter value. */
   value?: string;
 }
 
 /**
- * A link to a page on the site itself, pointing at the document rather than its address so the link
- * survives that document's slug changing.
+ * A link to a page on the site. It references the document rather than storing its address, so it keeps
+ * working when the slug changes.
  *
  * @public
  */
 export interface SanityPageLink<TDocument = SanityLinkDocument> {
   _type: typeof linkTypeName | typeof linkMarkTypeName;
+  /** Kind of destination. */
   type: "page";
-  /** Document the link points at. */
+  /** Document the link points to. */
   reference?: SanityLinkReference<TDocument>;
-  /** Section of the destination page to arrive at, stored without its leading hash. */
+  /** Section of the page to link to, without the leading `#`. */
   anchor?: string;
-  /** Query string parameters appended to the destination's address. */
+  /** Query parameters added to the address. */
   searchParams?: SanityLinkSearchParam[];
-  /** Text a visitor reads, standing in front of the destination document's own title. */
+  /** Link text, used instead of the page's title. */
   label?: string;
 }
 
 /**
- * A link to a section of the page it is drawn on, for moving a visitor within a page rather than
- * between them.
+ * A link to a section of the current page.
  *
  * @public
  */
 export interface SanityAnchorLink {
   _type: typeof linkTypeName | typeof linkMarkTypeName;
+  /** Kind of destination. */
   type: "anchor";
-  /** Section of this page to arrive at, stored without its leading hash. */
+  /** Section to link to, without the leading `#`. */
   anchor?: string;
-  /** Text a visitor reads. */
+  /** Link text. */
   label?: string;
 }
 
 /**
- * A link to an address elsewhere, covering any web page the site does not serve itself.
+ * A link to a web address.
  *
  * @public
  */
 export interface SanityUrlLink {
   _type: typeof linkTypeName | typeof linkMarkTypeName;
+  /** Kind of destination. */
   type: "url";
-  /** Address the link points at, including the scheme in front of it. */
+  /** Full URL, including the scheme. */
   url?: string;
-  /** Text a visitor reads. */
+  /** Link text. */
   label?: string;
 }
 
 /**
- * A link that opens a message to an address, rather than asking an author to know a URI scheme.
+ * A link that opens an email to an address.
  *
  * @public
  */
 export interface SanityEmailLink {
   _type: typeof linkTypeName | typeof linkMarkTypeName;
+  /** Kind of destination. */
   type: "email";
-  /** Address the message is sent to. */
+  /** Recipient's address. */
   email?: string;
-  /** Subject the message opens with. */
+  /** Subject line. */
   subject?: string;
-  /** Text a visitor reads. */
+  /** Link text. */
   label?: string;
 }
 
 /**
- * A link that starts a call to a number, rather than asking an author to know a URI scheme.
+ * A link that calls a phone number.
  *
  * @public
  */
 export interface SanityPhoneLink {
   _type: typeof linkTypeName | typeof linkMarkTypeName;
+  /** Kind of destination. */
   type: "phone";
-  /** Number the call is placed to. */
+  /** Phone number. */
   phone?: string;
-  /** Text a visitor reads. */
+  /** Link text. */
   label?: string;
 }
 
 /**
- * A link to a file a visitor downloads, held with the link rather than addressed elsewhere.
+ * A link that downloads a file stored with the link.
  *
  * @public
  */
 export interface SanityFileLink {
   _type: typeof linkTypeName | typeof linkMarkTypeName;
+  /** Kind of destination. */
   type: "file";
-  /** File the link serves. */
+  /** The file to download. */
   file?: SanityLinkFile;
-  /** Text a visitor reads. */
+  /** Link text. */
   label?: string;
 }
 
 /**
- * A link an author authored, discriminated by the kind of destination it points at.
+ * A stored link, discriminated by its kind of destination.
  *
  * @public
  */

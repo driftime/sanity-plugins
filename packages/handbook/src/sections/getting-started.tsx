@@ -6,9 +6,9 @@ import { DocumentTypesOverview } from "@/pages/document-types-overview";
 import { HowToUse } from "@/pages/how-to-use";
 
 /**
- * Builds the section holding the plugin's own introductory pages.
+ * Builds the section for the plugin's introductory pages.
  *
- * @returns A single section listing the built-in pages, in the order they are shown.
+ * @returns One section listing the built-in pages.
  */
 export function gettingStartedSections() {
   return [
@@ -19,7 +19,7 @@ export function gettingStartedSections() {
           id: "how-to-use-this-handbook",
           title: "How to use the Handbook",
           description:
-            "A guide to navigating the Handbook, reading the documentation for each field, and making sense of its examples, hints, and nested structure.",
+            "How to find your way around the Handbook, read the documentation for each field, and understand its examples, hints, and subfields.",
           icon: createSanityIcon(BookTextIcon),
           render: () => <HowToUse />,
         },
@@ -27,7 +27,7 @@ export function gettingStartedSections() {
           id: "document-types",
           title: "Document Types",
           description:
-            "An overview of all document types, organized by role. Select a document type to view its fields, descriptions, and examples.",
+            "A list of every document type, grouped by role. Select a document type to see its fields, descriptions, and examples.",
           icon: createSanityIcon(LayoutGridIcon),
           render: () => <DocumentTypesOverview />,
         },

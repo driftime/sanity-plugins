@@ -5,26 +5,24 @@ import { formatOklch, parseOklch } from "@/lib/oklch";
 import { formatHex, formatRgb, parseHex, parseRgb } from "@/lib/srgb";
 
 /**
- * A color in each of the forms it might be wanted in, so a consumer paints CSS with one, writes an
- * email with another, and never converts anything itself.
+ * A color in every supported format.
  *
  * @public
  */
 export interface SanityColorFormats {
-  /** Six digit hex, as `#ece4d4`. */
+  /** Six-digit hex, such as `#ece4d4`. */
   hex: string;
-  /** Space-separated RGB, as `rgb(236 228 212)`. */
+  /** Space-separated RGB, such as `rgb(236 228 212)`. */
   rgb: string;
-  /** OKLCH, as `oklch(0.9209 0.0231 84.59)`. */
+  /** OKLCH, such as `oklch(0.9209 0.0231 84.59)`. */
   oklch: string;
 }
 
 /**
- * Reads a color written in any form this plugin accepts as its three linear channels, clearing the
- * stega characters a Sanity fetch leaves behind.
+ * Reads a color in any supported format as linear RGB channels, removing stega characters first.
  *
- * @param value - Color written as hex, RGB, or OKLCH.
- * @returns The red, green, and blue channels, or undefined when the color cannot be read.
+ * @param value - A color as hex, RGB, or OKLCH.
+ * @returns The red, green, and blue channels, or undefined when the color can't be read.
  */
 export function parseChannels(value: string | undefined) {
   const cleaned = stegaClean(value);
@@ -34,12 +32,11 @@ export function parseChannels(value: string | undefined) {
 }
 
 /**
- * Reads a color written in any form this plugin accepts, clearing the stega characters a Sanity
- * fetch leaves behind. A color beyond what a display can show is brought back to its nearest
- * edge, so every form returned is one a browser will paint.
+ * Reads a color in any supported format and returns it in every format, removing stega characters
+ * first. Colors outside the sRGB gamut are clamped to its nearest edge.
  *
- * @param value - Color written as hex, RGB, or OKLCH.
- * @returns The color in every form, or undefined when it cannot be read.
+ * @param value - A color as hex, RGB, or OKLCH.
+ * @returns The color in every format, or undefined when it can't be read.
  * @public
  */
 export function parseColor(value: string | undefined): SanityColorFormats | undefined {

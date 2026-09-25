@@ -3,22 +3,21 @@ import type { SanityLinkDestination } from "@/types";
 import { linkMarkTypeName } from "@/types";
 
 /**
- * Reads which kind of destination a stored value names, so the tabs and the preview describe the same
- * choice. A value the plugin no longer offers reads as no choice at all.
+ * Finds the link type for a stored destination value.
  *
- * @param name - The stored type value.
- * @returns The matching link type, or undefined when nothing recognisable was stored.
+ * @param name - The stored value.
+ * @returns The link type, or undefined when the value isn't recognised.
  */
 export function getLinkType(name: string | undefined) {
   return linkTypes.find((linkType) => linkType.name === name);
 }
 
 /**
- * Names the fields every other destination owns, so moving to one clears what the last one wrote. A
- * field the destination being moved to also owns is kept, since a page and a section share the anchor.
+ * Lists the fields that other destinations own, which are cleared when switching to this one. Fields it
+ * shares, such as the anchor, are kept.
  *
- * @param type - The destination being moved to.
- * @returns Fields belonging to the destinations being left.
+ * @param type - The new destination.
+ * @returns The fields to clear.
  */
 export function getStaleFields(type: SanityLinkDestination) {
   const kept = new Set<string>(getLinkType(type)?.fields);
@@ -30,12 +29,11 @@ export function getStaleFields(type: SanityLinkDestination) {
 }
 
 /**
- * Checks whether the destination a link points at shows a given field, so a field's visibility is
- * read from the one table that says which destination owns what.
+ * Checks whether a link's destination shows a field.
  *
- * @param parent - The link the field belongs to.
- * @param field - Name of the field to check for.
- * @returns Whether the link's destination shows that field.
+ * @param parent - The link.
+ * @param field - The field name.
+ * @returns Whether the field is shown.
  */
 export function showsField(parent: unknown, field: string) {
   return linkTypes.some(
@@ -44,23 +42,22 @@ export function showsField(parent: unknown, field: string) {
 }
 
 /**
- * Checks the kind of destination the link a field belongs to points at, so a field is shown and
- * required only for the link type that uses it.
+ * Checks whether a link has a given kind of destination, so fields are only shown and required for
+ * their own link type.
  *
- * @param parent - The link the field belongs to.
- * @param type - The link type to check for.
- * @returns Whether the link points at that kind of destination.
+ * @param parent - The link.
+ * @param type - The link type.
+ * @returns Whether the link has that type.
  */
 export function isLinkType(parent: unknown, type: SanityLinkDestination) {
   return typeof parent === "object" && parent !== null && "type" in parent && parent.type === type;
 }
 
 /**
- * Checks whether the link a field belongs to was authored as an annotation, where the text it wraps
- * supplies what the field would otherwise hold.
+ * Checks whether a link is a text annotation, whose label comes from the text it wraps.
  *
- * @param parent - The link the field belongs to.
- * @returns Whether the link is a text annotation.
+ * @param parent - The link.
+ * @returns Whether the link is an annotation.
  */
 export function isLinkMark(parent: unknown) {
   return typeof parent === "object" && parent !== null && "_type" in parent && parent._type === linkMarkTypeName;

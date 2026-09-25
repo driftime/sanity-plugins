@@ -1,2 +1,2 @@
-/** Whether the plugin is running in a development build, which decides whether it reports what it recovered from. */
+/** Whether this is a development build, the only kind in which the plugin logs. */
 export const isDevelopment = process.env["NODE_ENV"] === "development";

@@ -9,11 +9,10 @@ import type { SanityHandbookGuide } from "@/types";
 import { calloutTypeName, codeTypeName, horizontalRuleTypeName, imageTypeName, videoTypeName } from "@/types";
 
 /**
- * Creates the Portable Text content field for Handbook guides, offering the built-in blocks alongside
- * any a consumer registered.
+ * Creates the guide content field, offering the built-in blocks and any custom ones.
  *
- * @param customBlocks - Custom block definitions registered by the consumer.
- * @returns A field definition for the guide content array.
+ * @param customBlocks - Custom blocks added by the site.
+ * @returns The content field.
  */
 export function createGuideContentField(customBlocks: SanityHandbookBlockDefinition[] = []) {
   return defineField({

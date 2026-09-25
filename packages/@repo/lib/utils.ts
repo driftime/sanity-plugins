@@ -1,13 +1,12 @@
-/** A value that may be absent, covering both null and undefined. */
+/** A value that may be null or undefined. */
 type Nullable<T> = T | null | undefined;
 
 /**
- * Checks whether a value is defined and non-empty, treating `false`, empty strings, and objects with
- * no keys as absent. An array is absent unless one of its elements is itself present, while anything
- * built from a class counts as present on existence alone. Not intended for boolean flags.
+ * Checks whether a value is present. `false`, blank strings, and empty plain objects count as absent,
+ * as does an array with no present elements.
  *
  * @param value - The value to check.
- * @returns True if the value is defined and not empty.
+ * @returns True if the value is present.
  */
 export function isDefined<T>(value: Nullable<T> | false): value is T {
   if (value === undefined || value === null || value === false) return false;
@@ -25,10 +24,10 @@ export function isDefined<T>(value: Nullable<T> | false): value is T {
 }
 
 /**
- * Converts a string between different casing formats.
+ * Converts a string to another case.
  *
  * @param value - The string to convert.
- * @param format - The target casing format.
+ * @param format - The case to convert to.
  * @returns The converted string.
  */
 export function convertCase(value: string, format: "kebab" | "snake" | "camel" | "pascal" | "title" | "sentence") {
@@ -64,22 +63,21 @@ export function convertCase(value: string, format: "kebab" | "snake" | "camel" |
 }
 
 /**
- * Checks whether a value can be read by key, narrowing what arrives untyped from outside the plugin.
+ * Checks whether a value is an object whose keys can be read.
  *
  * @param value - The value to check.
- * @returns True if the value has keys to read.
+ * @returns True if the value is an object.
  */
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
 /**
- * Reads a value out of nested records by following a path of keys, so a caller can name something
- * inside a shape it does not otherwise know.
+ * Reads a nested value by following a path of keys.
  *
  * @param value - The object to read from.
- * @param path - Keys leading to the value.
- * @returns The value at the path, or undefined when a key is missing or a step holds no keys to read.
+ * @param path - The keys to follow.
+ * @returns The value, or undefined when the path doesn't exist.
  */
 export function readPath(value: unknown, path: string[]) {
   let current: unknown = value;

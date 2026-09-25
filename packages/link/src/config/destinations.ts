@@ -8,21 +8,21 @@ import { MailIcon } from "@/icons/mail";
 import { PhoneIcon } from "@/icons/phone";
 import type { SanityLinkDestination } from "@/types";
 
-/** One kind of destination a link may point at, as the Studio offers it. */
+/** A kind of destination, as offered in the Studio. */
 interface LinkTypeDefinition {
-  /** Value stored to discriminate the link. */
+  /** Value stored to identify the destination. */
   name: SanityLinkDestination;
-  /** Icon shown beside the destination wherever it is named. */
+  /** Icon shown wherever the destination is named. */
   icon: ComponentType<ComponentProps<"svg">>;
-  /** The one name this destination goes by, on its tab and anywhere else it is named. */
+  /** Name shown on its tab and anywhere else it's named. */
   label: string;
-  /** Fields this destination shows. A field may be shared, as the anchor is by a page and a section. */
+  /** Fields this destination shows. A field can be shared, as the anchor is by page and anchor links. */
   fields: string[];
 }
 
 /**
- * The kinds of destination a link may point at, offered in this order. The stored union, the schema's
- * fields, the tabs, and the resolver all follow it.
+ * The kinds of destination, in the order offered. The stored union, schema fields, tabs, and resolver all
+ * follow this order.
  */
 export const linkTypes = [
   { name: "page", icon: FileSymlinkIcon, label: "Page", fields: ["reference", "anchor", "searchParams"] },
@@ -33,5 +33,5 @@ export const linkTypes = [
   { name: "file", icon: FileDownIcon, label: "File", fields: ["file"] },
 ] as const satisfies LinkTypeDefinition[];
 
-/** Destinations offered where nothing narrows them. */
+/** Destinations offered when none are configured. */
 export const defaultDestinations: SanityLinkDestination[] = linkTypes.map((linkType) => linkType.name);

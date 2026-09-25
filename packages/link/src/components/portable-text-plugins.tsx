@@ -9,8 +9,8 @@ import type { PortableTextPluginsProps } from "sanity";
 import { createUrlLink } from "@/lib/annotations";
 
 /**
- * Keeps hyperlinks when formatted text is pasted. Sanity's own handling recognises only its default
- * annotation shape, so a pasted link would otherwise arrive as plain text.
+ * Keeps links when formatted text is pasted. Sanity only recognises its own default link annotation,
+ * so pasted links would otherwise become plain text.
  */
 const pasteUrlBehavior = defineBehavior({
   on: "clipboard.paste",
@@ -53,11 +53,11 @@ const pasteUrlBehavior = defineBehavior({
 });
 
 /**
- * Writes this plugin's link when an author pastes one, from formatted markup or a bare address. Pass
+ * Makes pasted links use this plugin's link type, whether pasted as formatted text or a bare URL. Pass
  * it to a text type's `components.portableText.plugins`.
  *
- * @param props - Portable Text plugin props the Studio supplies.
- * @returns The editor's own plugins, with link pasting replaced.
+ * @param props - The Portable Text plugin props from the Studio.
+ * @returns The editor's plugins, with link pasting replaced.
  * @public
  */
 export function PortableTextLinkPlugins(props: PortableTextPluginsProps) {

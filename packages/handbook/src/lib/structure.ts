@@ -8,13 +8,12 @@ import { isPermittedEditor } from "@/lib/editors";
 import { guideTypeName, handbookTypeName } from "@/types";
 
 /**
- * Creates the Structure tool items for Handbook documents, yielding nothing when the current user is
- * not permitted to edit them.
+ * Creates Structure tool items for the Handbook documents, or none when the current user can't edit them.
  *
- * @param structureBuilder - The Sanity Structure builder instance.
- * @param context - The Structure context carrying the current user.
- * @param editors - Email addresses permitted to edit, defaulting to the configured list.
- * @returns The list items for the Handbook singleton and the guides list.
+ * @param structureBuilder - The structure builder.
+ * @param context - The structure context, with the current user.
+ * @param editors - Email addresses of the editors, defaulting to the configured list.
+ * @returns List items for the Handbook document and the guides list.
  * @public
  */
 export function handbookStructure(

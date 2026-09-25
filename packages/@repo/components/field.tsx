@@ -19,32 +19,31 @@ import {
 } from "sanity";
 
 /**
- * Checks whether a form node holds members of its own, as an object or an array of objects does.
+ * Checks whether a form node has members, as objects and arrays of objects do.
  *
  * @param node - The form node to check.
- * @returns True if the node holds members.
+ * @returns True if the node has members.
  */
 function hasMembers(node: BaseFormNode): node is ObjectFormNode | ArrayOfObjectsFormNode {
   return "members" in node;
 }
 
 /**
- * Gathers the validation reported on a form node and on anything inside it.
+ * Collects the validation on a form node and everything inside it.
  *
- * @param node - The form node to gather validation from.
- * @returns Every validation reported on the node or within it.
+ * @param node - The form node.
+ * @returns Every validation result on the node or inside it.
  */
 function collectNodeValidation(node: BaseFormNode): BaseFormNode["validation"] {
   return [...node.validation, ...(hasMembers(node) ? collectMemberValidation(node.members) : [])];
 }
 
 /**
- * Gathers the validation reported anywhere inside a field's members. The form hands a field only what
- * is reported at its own path, which suits a frame drawing its members inline but leaves one that
- * hides them showing nothing they report.
+ * Collects the validation anywhere inside a field's members. The form only passes a field the
+ * validation at its own path, so a field that hides its members would otherwise show none of theirs.
  *
- * @param members - The members to gather validation from.
- * @returns Every validation reported on a member or within one.
+ * @param members - The members.
+ * @returns Every validation result on the members or inside them.
  */
 function collectMemberValidation(members: (ObjectMember | ArrayOfObjectsMember)[]): BaseFormNode["validation"] {
   return members.flatMap((member) => {

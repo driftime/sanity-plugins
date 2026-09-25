@@ -5,10 +5,10 @@ import type { HoveredIcon } from "@/components/picker/tooltip";
 import type { LibraryIcon } from "@/lib/library";
 
 /**
- * Tracks which icon the cursor rests on, holding a tooltip back until it has settled somewhere.
+ * Tracks the icon under the cursor, showing its tooltip after a short delay.
  *
- * @param scrolling - Whether the grid is currently moving under the cursor.
- * @returns The icon being hovered, alongside ways to follow the cursor and to dismiss it.
+ * @param scrolling - Whether the grid is scrolling.
+ * @returns The hovered icon, and functions to update and clear it.
  */
 export function useIconTooltip(scrolling: boolean) {
   const [hovered, setHovered] = useState<HoveredIcon>();

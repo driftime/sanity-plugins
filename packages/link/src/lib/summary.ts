@@ -5,11 +5,10 @@ import { composeAnchorHref } from "@/lib/destinations";
 import type { SanityLink } from "@/types";
 
 /**
- * Reads the host a web address points at, so a link to a file buried three folders deep still reads
- * as the site it came from. The subdomain everyone ignores goes with it.
+ * Reads a URL's host name, without a leading `www.`.
  *
- * @param url - The address to read.
- * @returns The host, or undefined when the address cannot be read as one.
+ * @param url - The URL.
+ * @returns The host name, or undefined when the URL can't be parsed.
  */
 function getDomain(url: string | undefined) {
   const address = stegaClean(url);
@@ -23,11 +22,10 @@ function getDomain(url: string | undefined) {
 }
 
 /**
- * Describes where a link leads using only what the document already holds, which covers every
- * destination an author typed out in full.
+ * Describes where a link leads using only values stored on the link itself.
  *
- * @param value - The link being authored.
- * @returns The description, or undefined when the destination is stored as a pointer.
+ * @param value - The link being edited.
+ * @returns The description, or undefined when the destination is a reference.
  */
 export function getLocalDetail(value: Partial<SanityLink> | undefined) {
   if (!isDefined(value)) return undefined;
@@ -41,11 +39,10 @@ export function getLocalDetail(value: Partial<SanityLink> | undefined) {
 }
 
 /**
- * Names the document a link leads to, for the two destinations stored as a pointer rather than as
- * something an author wrote.
+ * Reads the ID of the document or asset a page or file link points to.
  *
- * @param value - The link being authored.
- * @returns The document's identifier, or undefined when the destination holds none.
+ * @param value - The link being edited.
+ * @returns The ID, or undefined when there isn't one.
  */
 export function getReferencedId(value: Partial<SanityLink> | undefined) {
   if (!isDefined(value)) return undefined;
@@ -66,12 +63,12 @@ export function getReferencedId(value: Partial<SanityLink> | undefined) {
 }
 
 /**
- * Builds the one line the closed control reads, putting what an author wrote first and where it
- * leads in brackets behind it. Either alone stands on its own.
+ * Builds the one-line summary on the link button: the label, then the destination in brackets. Either
+ * one works alone.
  *
- * @param label - Text the author wrote.
- * @param detail - Where the link leads.
- * @returns The line, or undefined when neither is known.
+ * @param label - The link text.
+ * @param detail - The destination description.
+ * @returns The summary, or undefined when neither is known.
  */
 export function composeSummary(label: string | undefined, detail: string | undefined) {
   const written = stegaClean(label);

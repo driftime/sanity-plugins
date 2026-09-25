@@ -9,42 +9,41 @@ import { resolveColorSwatch } from "@/lib/swatches";
 import type { SanityColor, SanityColorSwatchName } from "@/types";
 
 /**
- * A color ready to paint with, carrying the palette name it came from where it has one.
+ * A color ready to use, with its palette name if it has one.
  *
  * @public
  */
 export interface SanityResolvedColor extends SanityColorFormats {
-  /** Name the palette offers it under, or undefined for a color chosen outside the palette. */
+  /** Palette name, or undefined for a color from outside the palette. */
   name?: string;
-  /** How the palette names it to an author, or undefined for a color chosen outside the palette. */
+  /** Palette label, or undefined for a color from outside the palette. */
   label?: string;
-  /** Swatch it was taken from, where it came from an image. */
+  /** Image swatch the color came from, if any. */
   swatch?: SanityColorSwatchName;
 }
 
 /**
- * A pairing ready to paint with, alongside how it measures up.
+ * A resolved background and text pairing, with its contrast.
  *
  * @public
  */
 export interface SanityColorResult {
-  /** Color painted behind the content, or undefined when none was chosen. */
+  /** Background color, or undefined when none was chosen. */
   background?: SanityResolvedColor;
-  /** Color the text paints, including the pairing applied where an author chose none. */
+  /** Text color, including the automatic pairing when none was chosen. */
   text?: SanityResolvedColor;
-  /** Whether the text paints light or dark, for anything sitting over the color without inheriting from it. */
+  /** Whether the text is light or dark, for elements that don't inherit the text color. */
   tone?: "light" | "dark";
-  /** Contrast between the two, or undefined when there is no pairing to measure. */
+  /** Contrast between the two, or undefined when there's no pairing to measure. */
   ratio?: number;
 }
 
 /**
- * Resolves one stored color, following a palette name to what it paints and reading anything else
- * as the color it already is.
+ * Resolves one stored color, looking up palette names and reading anything else as a color value.
  *
- * @param value - The color as the author chose it.
- * @param palette - The palette to resolve a name against.
- * @param hex - What it resolved to, needed only where it names an image swatch.
+ * @param value - The stored color.
+ * @param palette - The palette to look names up in.
+ * @param hex - The resolved color, needed only for an image swatch.
  * @returns The color, or undefined when nothing readable was stored.
  */
 export function resolveColorValue(
@@ -72,15 +71,14 @@ export function resolveColorValue(
 }
 
 /**
- * Resolves the color text paints in, standing in for the pairing applied where an author chose
- * none. A palette color names its own pairing; anything else takes whichever of black or white
- * reads better on it.
+ * Resolves the text color, with an automatic pairing when none was chosen: a palette color's `contrast`,
+ * or otherwise black or white, whichever contrasts more.
  *
  * @param background - The resolved background.
  * @param text - The stored text color.
- * @param palette - The palette to resolve a name against.
- * @param hex - What the text resolved to, needed only where it names an image swatch.
- * @returns The color, or undefined when there is no background to sit on.
+ * @param palette - The palette to look names up in.
+ * @param hex - The resolved text color, needed only for an image swatch.
+ * @returns The text color, or undefined when there's no background.
  */
 function resolveTextValue(
   background: SanityResolvedColor | undefined,
@@ -99,11 +97,10 @@ function resolveTextValue(
 }
 
 /**
- * Reads whether text paints light or dark, for anything standing over a color without inheriting
- * from it.
+ * Works out whether a text color is light or dark.
  *
  * @param text - The resolved text color.
- * @returns The tone, or undefined when there is no text color to read.
+ * @returns The tone, or undefined when there's no text color.
  */
 function getColorTone(text: SanityResolvedColor | undefined) {
   if (!isDefined(text)) return undefined;
@@ -112,11 +109,10 @@ function getColorTone(text: SanityResolvedColor | undefined) {
 }
 
 /**
- * Resolves a stored color into the pairing a page paints, in every form it might be wanted in, with
- * the contrast between the two already measured.
+ * Resolves a stored color into a background and text pairing in every format, with its contrast measured.
  *
  * @param color - The stored color.
- * @param palette - The palette its names are resolved against.
+ * @param palette - The palette to look names up in.
  * @returns The resolved pairing.
  * @public
  */
@@ -132,11 +128,10 @@ export function resolveColor(color: SanityColor | undefined, palette?: SanityCol
 }
 
 /**
- * Binds a resolver to a palette, so a site reads a stored color without naming the palette at every
- * call. The palette is still passed, once, where it is defined.
+ * Creates a resolver bound to a palette, so the site doesn't pass the palette on every call.
  *
- * @param palette - The palette names are resolved against.
- * @returns A resolver taking only the stored color.
+ * @param palette - The palette.
+ * @returns A resolver that takes only the stored color.
  * @public
  */
 export function createColorResolver(palette: SanityColorPalette) {

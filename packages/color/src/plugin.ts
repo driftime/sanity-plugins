@@ -9,126 +9,127 @@ import type { SanityColorSwatchName, colorTypeName } from "@/types";
 
 declare module "@sanity/types" {
   interface IntrinsicDefinitions {
+    /** Definition of a field of type `color`. */
     color: SanityColorDefinition;
   }
 }
 
 /**
- * A color an author may set.
+ * A color authors can set.
  *
  * @public
  */
 export type SanityColorPicker = "background" | "text";
 
 /**
- * Somewhere the colors a picker offers may come from.
+ * A source of colors for the pickers.
  *
  * @public
  */
 export type SanityColorSource = "palette" | "image" | "custom";
 
 /**
- * How the image source behaves. Naming `image` as a source without a field to read is a mistake
- * rather than a quiet no-op, since there would be nothing to offer.
+ * Settings for the image source. Using `image` as a source without a `field` logs a warning, since
+ * there's no image to take swatches from.
  *
  * @public
  */
 export interface SanityColorImage {
-  /** Dotted path from the object holding the field to the image swatches are taken from. */
+  /** Dotted path from the object holding the color field to the image to take swatches from. */
   field?: string;
-  /** Swatches the image may offer, in the order they are listed. Every swatch when omitted. */
+  /** Image swatches authors can choose from, in the order listed. Defaults to every swatch. */
   swatches?: SanityColorSwatchName[];
 }
 
 /**
- * How the preview beneath the pickers behaves.
+ * Settings for the preview below the pickers.
  *
  * @public
  */
 export interface SanityColorPreview {
-  /** Words to paint the pairing with. Shown as a specimen of the two letters where none are given. */
+  /** Text to show the pairing with. Defaults to an "Aa" sample. */
   text?: string;
 }
 
 /**
- * How the custom source behaves.
+ * Settings for the custom source.
  *
  * @public
  */
 export interface SanityColorCustom {
-  /** Color each picker starts a custom selection from. */
+  /** Starting colors for a custom selection. */
   initial?: SanityColorInitial;
 }
 
 /**
- * Color each picker starts a custom selection from.
+ * Starting colors for a custom selection.
  *
  * @public
  */
 export interface SanityColorInitial {
-  /** Color the background picker starts from. `#ffffff` when omitted. */
+  /** Starting background. Defaults to `#ffffff`. */
   background?: string;
-  /** Color the text picker starts from. `#000000` when omitted. */
+  /** Starting text color. Defaults to `#000000`. */
   text?: string;
 }
 
 /**
- * Options a color field takes. Each list replaces whatever the plugin was given rather than adding
- * to it, while the objects beside them say only how a thing behaves and are merged key by key.
+ * Options for a color field. A field's own lists replace the plugin's, while settings objects merge key by key.
  *
  * @public
  */
 export interface SanityColorOptions<TName extends string = string> extends ObjectOptions {
-  /** Colors an author may set. Both when omitted. */
+  /** Colors authors can set. Defaults to both. */
   pickers?: SanityColorPicker[];
-  /** Where the colors a picker offers may come from. Palette colors and a custom color when omitted. */
+  /** Where the pickers' colors come from. Defaults to the palette and custom colors. */
   sources?: SanityColorSource[];
-  /** Colors the palette source offers, in the order they are named. Every color when omitted. */
+  /** Palette colors authors can choose from, in the order listed. Defaults to every color. */
   colors?: TName[];
-  /** How the image source behaves. */
+  /** Settings for the image source. */
   image?: SanityColorImage;
-  /** How the custom source behaves. */
+  /** Settings for the custom source. */
   custom?: SanityColorCustom;
-  /** How the preview beneath the pickers behaves. */
+  /** Settings for the preview below the pickers. */
   preview?: SanityColorPreview;
-  /** What a pairing is measured against, or `off` to measure nothing. */
+  /** Conformance level to measure pairings against, or `off` to skip measuring. */
   standard?: SanityColorStandard;
 }
 
 /**
- * Shape of a field or array member holding a color, so its options are completed and checked the
- * way a built-in type's are.
+ * Definition of a field or array member holding a color, so its options are type-checked like a
+ * built-in type's.
  *
  * @public
  */
 export interface SanityColorDefinition extends Omit<TypeAliasDefinition<typeof colorTypeName, undefined>, "options"> {
+  /** Options for the field. */
   options?: SanityColorOptions;
 }
 
 /**
- * Everything the plugin accepts, all of which may be left out. Without a palette an author is still
- * offered custom colors and any swatches an image yields.
+ * Plugin configuration. Every option is optional; without a palette, authors can still choose custom
+ * colors and image swatches.
  *
  * @public
  */
 export interface SanityColorConfig {
-  /** The palette every field offers, as returned by `defineColorPalette`. */
+  /** Palette offered to every field, as returned by `defineColorPalette`. */
   palette?: SanityColorPalette;
-  /** Colors an author may set. Both when omitted. */
+  /** Colors authors can set. Defaults to both. */
   pickers?: SanityColorPicker[];
-  /** Where the colors a picker offers may come from. Palette colors and a custom color when omitted. */
+  /** Where the pickers' colors come from. Defaults to the palette and custom colors. */
   sources?: SanityColorSource[];
-  /** How the image source behaves. */
+  /** Settings for the image source. */
   image?: SanityColorImage;
-  /** How the custom source behaves. */
+  /** Settings for the custom source. */
   custom?: SanityColorCustom;
-  /** How the preview beneath the pickers behaves. */
+  /** Settings for the preview below the pickers. */
   preview?: SanityColorPreview;
-  /** What a pairing is measured against, or `off` to measure nothing. */
+  /** Conformance level to measure pairings against, or `off` to skip measuring. */
   standard?: SanityColorStandard;
 }
 
-/** Compiled shape of a color field, carrying the options the field itself was given. */
+/** Compiled color field type, with the field's own options. */
 export interface ColorSchemaType extends ObjectSchemaType {
   options?: SanityColorOptions;
 }
@@ -145,11 +146,11 @@ const plugin = definePlugin<SanityColorConfig>((config) => {
 });
 
 /**
- * Creates the color field type for Sanity Studio, offering a palette through a picker that measures
- * every pairing against WCAG as an author chooses it.
+ * Adds a color field type to Sanity Studio, with a picker that checks each pairing's contrast against
+ * WCAG as authors choose it.
  *
- * @param config - Plugin configuration.
- * @returns Sanity plugin definition.
+ * @param config - The plugin configuration.
+ * @returns The plugin.
  * @public
  */
 export function colorPlugin(config: SanityColorConfig = {}) {

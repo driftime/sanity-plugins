@@ -1,11 +1,11 @@
 import { isDefined } from "@repo/lib/utils";
 
 /**
- * Creates a URL from an address, resolving a root-relative one against the site it belongs to.
+ * Parses an address as a URL, resolving a root-relative address against the site's origin.
  *
- * @param href - The address to read.
- * @param origin - Origin the site is served from.
- * @returns The URL, or undefined when the address cannot be read as one.
+ * @param href - The address.
+ * @param origin - The site's origin.
+ * @returns The URL, or undefined when the address can't be parsed.
  */
 export function createUrl(href: string | undefined, origin: string) {
   if (!isDefined(href)) return undefined;
@@ -18,12 +18,12 @@ export function createUrl(href: string | undefined, origin: string) {
 }
 
 /**
- * Reduces an absolute address pointing back at the site to a root-relative one, so an address an
- * author pasted in full still routes on the client rather than reloading the page.
+ * Converts an absolute URL on this site to a root-relative address, so it routes client-side instead of
+ * reloading the page.
  *
- * @param href - The absolute address to reduce.
- * @param origin - Origin the site is served from.
- * @returns A root-relative address, or undefined when the address points elsewhere.
+ * @param href - The absolute URL.
+ * @param origin - The site's origin.
+ * @returns The root-relative address, or undefined when the URL is on another site.
  */
 export function resolveRelativeHref(href: string, origin: string) {
   try {
@@ -37,25 +37,23 @@ export function resolveRelativeHref(href: string, origin: string) {
 }
 
 /**
- * Splits a path into the segments that carry it, discarding the empty ones a leading or trailing
- * slash leaves behind.
+ * Splits a path into its non-empty segments.
  *
- * @param path - The path to split.
- * @returns The segments the path is built from.
+ * @param path - The path.
+ * @returns The segments.
  */
 function splitSegments(path: string) {
   return path.split("/").filter((segment) => isDefined(segment));
 }
 
 /**
- * Checks whether a URL covers the page being read, matching every segment it declares against the
- * start of the current path. The root is compared exactly, since it precedes every path and would
- * otherwise cover every page on the site.
+ * Checks whether a URL is the current page or one of its parent paths. The root only matches itself,
+ * since it would otherwise match every page.
  *
- * @param url - The URL to compare.
- * @param pathname - Path of the page being read.
- * @param origin - Origin the site is served from.
- * @returns Whether the URL is the current page or one of the paths above it.
+ * @param url - The URL.
+ * @param pathname - The current path.
+ * @param origin - The site's origin.
+ * @returns Whether the URL is the current page or one of its parent paths.
  */
 export function checkContainsActivePath(url: URL, pathname: string, origin: string) {
   if (url.origin !== origin) return false;
@@ -68,13 +66,13 @@ export function checkContainsActivePath(url: URL, pathname: string, origin: stri
 }
 
 /**
- * Checks whether a URL points at the page being read and nothing else. An address carrying an anchor
- * names a location within a page rather than the page itself, so it is never the page already open.
+ * Checks whether a URL is exactly the current page. A URL with an anchor never matches, since it points
+ * to a location within a page.
  *
- * @param url - The URL to compare.
- * @param pathname - Path of the page being read.
- * @param origin - Origin the site is served from.
- * @returns Whether the URL matches the current page exactly.
+ * @param url - The URL.
+ * @param pathname - The current path.
+ * @param origin - The site's origin.
+ * @returns Whether the URL is the current page.
  */
 export function checkIsActivePath(url: URL, pathname: string, origin: string) {
   if (url.origin !== origin || isDefined(url.hash)) return false;
