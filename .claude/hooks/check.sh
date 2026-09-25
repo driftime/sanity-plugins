@@ -5,11 +5,11 @@ input=$(cat)
 session_id=$(jq -r '.session_id' <<< "$input")
 list="/tmp/claude-check-$session_id"
 
-# Nothing was written or edited this session, so there's nothing to check.
+# No files were edited this session.
 [ -f "$list" ] || exit 0
 
-# A listed file may have since been deleted; oxfmt already runs on every
-# edit in format.sh, so only linting is left to do here.
+# Skip files deleted since they were edited. format.sh has already formatted
+# the rest, so they only need linting.
 files=$(sort -u "$list" | while read -r file; do [ -f "$file" ] && echo "$file"; done)
 
 [ -z "$files" ] && exit 0
@@ -17,9 +17,8 @@ files=$(sort -u "$list" | while read -r file; do [ -f "$file" ] && echo "$file";
 output=$("$linter" $files 2>&1)
 status=$?
 
-# oxlint errors when it has nothing to check, which isn't a real failure.
-# Blocking is otherwise safe: this list only ever holds this session's own
-# files, so it can't hold up another agent's work.
+# oxlint fails when every file is ignored, which isn't a lint error. The list
+# only holds this session's files, so blocking never stalls another agent.
 if [ $status -ne 0 ] && [[ "$output" != *"No files found to lint"* ]]; then
   jq -n --arg output "$output" '{decision: "block", reason: $output}'
 fi

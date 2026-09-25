@@ -13,7 +13,7 @@ export default defineConfig({
   plugins: ["eslint", "import", "jsdoc", "jsx-a11y", "oxc", "promise", "react", "typescript", "unicorn"],
   categories: {
     correctness: "error",
-    // Nursery rules are unfinished and can fire on correct code, so they should not fail the build.
+    // Nursery rules are unfinished and can flag correct code, so they warn rather than fail the build.
     nursery: "warn",
     pedantic: "error",
     perf: "error",
@@ -22,179 +22,178 @@ export default defineConfig({
     suspicious: "error",
   },
   rules: {
-    // Conditional rendering accumulates branches, making cyclomatic complexity misleading for components.
+    // Conditional rendering inflates the score of components that are simple to follow.
     complexity: "off",
 
-    // Single-line blocks are visually unambiguous; braces are only needed when blocks span multiple lines.
+    // Single-line guard clauses read clearly without braces.
     curly: ["error", "multi-line", "consistent"],
 
-    // TypeScript infers return types reliably; explicit annotations add noise without safety.
+    // Return types are inferred, and annotated only where the annotation is the contract.
     "explicit-function-return-type": "off",
 
-    // TypeScript infers return types reliably, and the generated declarations carry them to consumers.
+    // Return types are inferred, and the generated declarations carry them to consumers.
     "explicit-module-boundary-types": "off",
 
-    // React and Sanity conventions both use function declarations.
+    // Matches the function declarations used throughout React and Sanity.
     "func-style": ["error", "declaration"],
 
-    // Naming conventions are enforced through code review, not arbitrary length limits.
+    // Names are kept complete by convention, which a length limit can't judge.
     "id-length": "off",
 
-    // Inline exports alongside declarations are clearer than a separate export block at the end.
+    // Exports sit on their declarations, which follow the file order rather than coming last.
     "import/exports-last": "off",
 
-    // Consolidating exports into a single block separates declaration from export for no benefit.
+    // Exports sit on their declarations rather than in a single block.
     "import/group-exports": "off",
 
-    // Modern codebases naturally have many imports; an arbitrary limit does not reflect complexity.
+    // The number of imports doesn't reflect how complex a module is.
     "import/max-dependencies": "off",
 
-    // Tooling configuration files are consumed as default exports.
+    // Tool configuration files require default exports.
     "import/no-default-export": "off",
 
-    // Named exports enable tree shaking and explicit imports.
+    // Named exports are the default wherever a framework doesn't require otherwise.
     "import/no-named-export": "off",
 
-    // Tooling configuration runs in Node rather than the browser, so builtins are legitimate there.
+    // Tool configuration runs in Node, where built-in modules are available.
     "import/no-nodejs-modules": "off",
 
-    // Single-export files do not need to be default exports.
+    // A file with a single export still uses a named export.
     "import/prefer-default-export": "off",
 
-    // Destructured parameters are documented by their type definitions.
+    // A destructured parameter is documented on its type rather than property by property.
     "jsdoc/require-param": ["error", { checkDestructured: false }],
 
-    // TypeScript handles parameter types; JSDoc type annotations are redundant.
+    // Parameter types come from TypeScript, so a JSDoc type would repeat them.
     "jsdoc/require-param-type": "off",
 
-    // TypeScript handles return types; JSDoc type annotations are redundant.
+    // Return types come from TypeScript, so a JSDoc type would repeat them.
     "jsdoc/require-returns-type": "off",
 
-    // The tag names the condition a function throws under rather than a class, so a type says nothing.
+    // The `@throws` tag describes when a function throws, not a class, so a type would add nothing.
     "jsdoc/require-throws-type": "off",
 
-    // Arbitrary numeric limits do not reflect actual code complexity.
+    // Size limits don't reflect how hard code is to follow.
     "max-depth": "off",
     "max-lines": "off",
     "max-lines-per-function": "off",
     "max-params": "off",
     "max-statements": "off",
 
-    // React components are uppercase functions, not constructors.
+    // Capitalised functions are React components, not constructors.
     "new-cap": ["error", { capIsNew: false }],
 
-    // Console logging is a core part of the local debugging workflow.
+    // The shared logger writes to the console, in development builds only.
     "no-console": "off",
 
-    // Continue is a valid control flow statement in loops.
+    // An early `continue` keeps a loop body flat, as an early return does in a function.
     "no-continue": "off",
 
-    // Separate type imports from the same module are intentional, not duplicates.
+    // Type imports sit on their own line, apart from value imports from the same module.
     "no-duplicate-imports": ["error", { allowSeparateTypeImports: true }],
 
-    // Inline comments annotate code at the point of reference where adjacency carries meaning.
+    // A comment sits beside the code it governs, which is sometimes on the same line.
     "no-inline-comments": "off",
 
-    // Numbers in this codebase are self-evident in context; naming them adds noise without clarity.
+    // Numbers read clearly in place, and single-use values aren't extracted into named constants.
     "no-magic-numbers": "off",
 
-    // All target environments support optional chaining natively.
+    // Every target environment supports optional chaining.
     "no-optional-chaining": "off",
 
-    // Flat ternaries are the clearest way to express conditional values; JSX children are the exception and use `&&`.
+    // A flat ternary is the clearest way to choose between two values; JSX children use `&&` instead.
     "no-ternary": "off",
 
-    // The undefined keyword has been read-only since ES5; void 0 is unnecessary.
+    // `undefined` is how the codebase represents a missing value.
     "no-undefined": "off",
 
-    // Sanity's system fields and the query metadata sitting beside them are leading-underscore by convention.
+    // Sanity's system fields and query metadata start with an underscore.
     "no-underscore-dangle": "off",
 
-    // Function declarations are hoisted, so this project's constants-before-functions order is safe.
+    // Constants can call functions declared further down the file, which hoisting allows.
     "no-use-before-define": ["error", { functions: false }],
 
-    // Void as a statement is useful for discarding return values in arrow functions.
+    // `void` as a statement discards a returned promise on purpose.
     "no-void": ["error", { allowAsStatement: true }],
 
-    // Declarations stay one per statement, so each JSDoc block keeps the declaration it documents.
+    // One declaration per statement keeps each JSDoc block attached to the declaration it documents.
     "one-var": ["error", "never"],
 
-    // All target environments support async/await natively.
+    // Every target environment supports async functions.
     "oxc/no-async-await": "off",
 
-    // Spreading inside map calls is a standard pattern for constructing new objects.
+    // The arrays mapped here are small, so building each object with a spread costs nothing noticeable.
     "oxc/no-map-spread": "off",
 
-    // Object rest and spread are fundamental to React component prop forwarding.
+    // Components forward props with object rest and spread.
     "oxc/no-rest-spread-properties": "off",
 
-    // React and Sanity types do not export readonly variants, making this impractical.
+    // React and Sanity types have no readonly versions to accept.
     "prefer-readonly-parameter-types": "off",
 
-    // The only props this rule forbids are `className` and `style`, which are how this project styles components.
+    // The rule forbids `className` and `style`, which are how components are styled.
     "react/forbid-component-props": "off",
 
-    // React and Sanity conventions both use function declarations, matching `func-style`.
+    // Matches `func-style`.
     "react/function-component-definition": [
       "error",
       { namedComponents: "function-declaration", unnamedComponents: "function-expression" },
     ],
 
-    // TypeScript projects use .tsx for JSX, not .jsx.
+    // JSX lives in `.tsx` files, which the rule rejects.
     "react/jsx-filename-extension": "off",
 
-    // Component architecture naturally controls nesting depth; an arbitrary limit adds no value.
+    // Nesting depth follows the markup a component needs.
     "react/jsx-max-depth": "off",
 
-    // The React Compiler memoises prop values, including context provider values.
+    // React Compiler memoises context provider values.
     "react/jsx-no-constructed-context-values": "off",
 
-    // These plugins ship a single set of English strings, so JSX text has no translation layer to route through.
+    // The plugins ship one set of English strings, so JSX text has no translation layer to go through.
     "react/jsx-no-literals": "off",
 
-    // Single-expression fragments are valid when returning dynamic children.
+    // Returning dynamic children as a single element sometimes needs a fragment around one expression.
     "react/jsx-no-useless-fragment": ["error", { allowExpressions: true }],
 
-    // Prop spreading is a deliberate pattern for forwarding HTML attributes to underlying elements.
+    // Components spread their remaining props onto their root element.
     "react/jsx-props-no-spreading": "off",
 
-    // React composition patterns require multiple related components in a single file.
+    // Small helper components sit in the same file as the component they serve.
     "react/no-multi-comp": "off",
 
-    // Co-locating types and constants with components is more valuable than Fast Refresh optimisation.
+    // Components export their props type alongside them, at the cost of some Fast Refresh updates.
     "react/only-export-components": "off",
 
-    // The automatic JSX transform does not require React in scope.
+    // The automatic JSX transform doesn't need React in scope.
     "react/react-in-jsx-scope": "off",
 
-    // Oxfmt owns declaration ordering; the linter only needs to enforce member ordering.
+    // Oxfmt sorts import declarations, so this only sorts the members within each.
     "sort-imports": ["error", { ignoreDeclarationSort: true }],
 
-    // Semantic grouping in schemas and component props is more meaningful than alphabetical order.
+    // Keys follow the order their definition sets, not the alphabet.
     "sort-keys": "off",
 
-    // Sanity schema definitions nest define* calls to express containment, which is structure, not complexity.
+    // Sanity schemas nest `define*` calls to describe structure.
     "unicorn/max-nested-calls": "off",
 
-    // React components use null to indicate an intentionally empty render.
+    // React components return null to render nothing.
     "unicorn/no-null": "off",
 
-    // Explicit undefined is necessary for consistent return paths in functions with mixed returns.
+    // An explicit `return undefined` keeps a function's return paths consistent.
     "unicorn/no-useless-undefined": "off",
   },
   overrides: [
     {
       files: ["packages/icon/**"],
       rules: {
-        // The rule maps list-like roles to native tags, which a searchable virtualised icon grid cannot use.
-        // ARIA roles are the only way to give the picker set semantics.
+        // The virtualised icon grid can't use native list elements, so ARIA roles give it list semantics.
         "jsx-a11y/prefer-tag-over-role": "off",
       },
     },
     {
       files: ["packages/@repo/lib/**"],
       rules: {
-        // Shared helpers must stay importable from a plugin's render entry, which never imports the Studio.
+        // Shared helpers must stay safe to import from a plugin's render entry, which never loads the Studio.
         "no-restricted-imports": ["error", { paths: ["react-dom", "sanity"], patterns: ["@sanity/*"] }],
       },
     },

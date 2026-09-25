@@ -1,31 +1,31 @@
 # Link Guidelines
 
-The rules every package follows live in the root `CLAUDE.md`; this file holds only what is true of Link alone.
+The rules every package follows are in the root `CLAUDE.md`. This file holds only what applies to Link.
 
 ## Environment
 
-**Dependencies.** In addition to the shared rule: `@sanity/types` is the deliberate exception, because `sanity` pins it exactly and declaring a range of our own risks a second copy for the module augmentation to land on. Nothing imports it directly — the Studio side takes those types from `sanity`, and the render side declares the handful of stored shapes it reads.
+**Dependencies.** In addition to the shared rule: `@sanity/types` is the deliberate exception, because `sanity` pins it exactly, and declaring our own range risks a second copy for the module augmentation to land on. Nothing imports it directly: the Studio side takes those types from `sanity`, and the render side declares the few stored shapes it reads.
 
 ## Structure
 
-**The site draws its own links.** An anchor belongs to a consumer's design system — its variants, its router, its focus styles — so the render entry point resolves a link and stops there. This is why there is no shared renderer here as there is in the icon plugin: the Studio never draws a link.
+**The site renders its own links.** An anchor belongs to a consumer's design system, with its variants, router, and focus styles, so the render entry resolves a link and stops there. That's why there's no shared renderer here as there is in the Icon plugin: the Studio never renders a link.
 
-**The site declares its routes, the plugin reads them.** A consumer's paths are theirs to name and theirs to validate against their framework's own generated types. So the render side takes a table of path patterns and the GROQ that fills their parameters, and derives the route resolver, the parameter fragment, and the link fragment from that one declaration rather than asking for each of them separately. A key on a route definition the plugin does not interpret is handed back untouched.
+**The site declares its routes, and the plugin reads them.** A consumer's paths are theirs to name and to check against their framework's generated types. So the render side takes a table of path patterns and the GROQ that fills their parameters, and derives the route resolver, the parameter fragment, and the link fragment from that one declaration. Keys on a route definition that the plugin doesn't use are passed back untouched.
 
 ## Code
 
-**Ordering.** In addition to the shared rule: the link types establish that order once, and the union, the schema fields, the selector, and the resolver all follow it.
+**Ordering.** In addition to the shared rule: the link types set the order once, and the union, the schema fields, the selector, and the resolver all follow it.
 
-**Uniform asynchrony.** A configuration holding one asynchronous resolver answers with a promise for every link, whatever destination it points at, so the shape a site handles never varies with the link: a resolver declared `async` is recognised as one before it runs, and a resolver merely answering with a promise from the first time it does.
+**Uniform asynchrony.** If a configuration has one asynchronous resolver, it returns a promise for every link, whatever its destination, so the shape a site handles never depends on the link. A resolver declared `async` is detected before it runs, and one that just returns a promise is detected the first time it does.
 
 ## Sanity
 
-**Type safety.** In addition to the shared rule: the annotation is the deliberate exception, and says so where it is defined.
+**Type safety.** In addition to the shared rule: the annotation is the deliberate exception, and says so where it's defined.
 
-**Conditional fields.** A field belonging to one link type only hides itself against the parent's type and requires itself the same way, through `rule.custom`. A plain `required()` cannot be used, because it would fire on the link types that never show the field.
+**Conditional fields.** A field that belongs to one link type hides itself based on the parent's type and makes itself required the same way, through `rule.custom`. A plain `required()` can't be used, because it would fire on link types that never show the field.
 
-**Data strings.** In addition to the shared rule: every part of a resolved href arrives this way, which is why the resolver cleans rather than trusts.
+**Data strings.** In addition to the shared rule: every part of a resolved href is a Sanity string, which is why the resolver cleans values rather than trusting them.
 
 ## Known Non-Fixes
 
-**Unexpanded references.** A query that forgets to dereference leaves a `_ref` behind where the document should be, and a resolver reading it gets nothing usable. Report it and resolve to nothing rather than rendering a broken link, because the fix belongs in the query.
+**Unexpanded references.** A query that forgets to dereference leaves a `_ref` where the document should be, and the resolver can't use it. Log it and resolve to nothing rather than rendering a broken link, because the fix belongs in the query.
