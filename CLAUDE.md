@@ -22,6 +22,8 @@
 
 **Local development.** Consumer projects link to the packages through [yalc](https://github.com/wclr/yalc). `bun run push` sends every package's current build, and a package's `bun run dev` rebuilds and pushes on each change.
 
+**Screenshots.** The README screenshots come from the demo Studio in `studio/`, which has its own Sanity project and holds nothing but what the screenshots show. It reads the project from `studio/.env.local`, as `studio/.env.example` describes, and signs in with the Sanity CLI's login. `bun run seed` in `studio/` loads its content from `studio/seed/`. Build the packages, start the Studio with `bun run studio`, then run `bun run screenshots` to capture every screenshot in WebKit, or `bun run screenshots <name>` for one. The captures land in `studio/.screenshots/`, are composited onto their backgrounds in the Sanity Plugin Suite Figma file, and each exported frame replaces its image in the package's `assets/`. This script is the only browser automation allowed in this repository.
+
 ## Oxlint Configuration
 
 **Ordering.** Keep the rules in `oxlint.config.ts` in alphabetical order.

@@ -4,18 +4,21 @@
   "workspaces": {
     "packages": [
       "packages/*",
-      "packages/@repo/*"
+      "packages/@repo/*",
+      "studio"
     ],
     "catalog": {
-      "@sanity/pkg-utils": "13.0.0"
+      "@sanity/pkg-utils": "13.0.2"
     }
   },
   "type": "module",
   "scripts": {
     "check": "oxfmt --check && oxlint",
     "fix": "oxfmt && oxlint --fix",
-    "typecheck": "bun run --filter './packages/*' --filter './packages/@repo/*' typecheck",
+    "typecheck": "bun run --filter './packages/*' --filter './packages/@repo/*' --filter './studio' typecheck",
     "dev": "bun run --filter './packages/*' dev",
+    "studio": "bun run --filter @repo/studio dev",
+    "screenshots": "bun run --filter @repo/studio screenshots",
     "build": "bun run --filter './packages/*' build",
     "push": "bun run --filter './packages/*' push",
     "changeset": "changeset",
@@ -23,20 +26,21 @@
     "release": "bun run check && bun run build && changeset publish"
   },
   "devDependencies": {
-    "@changesets/cli": "3.0.2",
+    "@changesets/cli": "3.0.3",
     "@sanity/browserslist-config": "1.0.5",
-    "@sanity/plugin-kit": "10.0.9",
+    "@sanity/plugin-kit": "10.0.10",
     "@sanity/tsconfig": "2.2.1",
-    "@types/node": "26.5.1",
+    "@types/node": "26.6.3",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "babel-plugin-react-compiler": "1.0.0",
-    "oxfmt": "0.67.0",
-    "oxlint": "1.82.0",
-    "oxlint-tsgolint": "7.0.2001",
+    "oxfmt": "0.70.0",
+    "oxlint": "1.85.0",
+    "oxlint-tsgolint": "7.0.2003",
+    "playwright": "1.63.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "sanity": "6.13.2",
+    "sanity": "6.16.0",
     "typescript": "7.0.2"
   },
   "browserslist": "extends @sanity/browserslist-config",

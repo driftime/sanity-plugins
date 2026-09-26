@@ -1,0 +1,24 @@
+{
+  "name": "@repo/studio",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc",
+    "dev": "sanity dev",
+    "screenshots": "bun screenshots.ts",
+    "seed": "mkdir -p .sanity && tar -czf .sanity/seed.tar.gz seed && sanity dataset import .sanity/seed.tar.gz --dataset production --replace"
+  },
+  "dependencies": {
+    "@driftime/sanity-plugin-color": "workspace:*",
+    "@driftime/sanity-plugin-handbook": "workspace:*",
+    "@driftime/sanity-plugin-icon": "workspace:*",
+    "@driftime/sanity-plugin-link": "workspace:*",
+    "@repo/lib": "workspace:*",
+    "lucide-react": "1.48.0",
+    "styled-components": "6.5.3"
+  },
+  "devDependencies": {
+    "lucide-static": "1.48.0"
+  }
+}

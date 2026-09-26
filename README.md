@@ -68,11 +68,13 @@ bun run typecheck
 bun run build
 ```
 
-`check` verifies formatting and linting across the workspace, `fix` applies both, and `typecheck` and `build` run in each package. Code shared between the plugins lives in `packages/@repo/*`. Those packages are private and never published, and their code is compiled into each plugin at build time, which is what lets a plugin install as one package with no extra dependencies.
+`check` verifies formatting and linting across the workspace, `fix` applies both, `typecheck` runs in each package and the demo Studio, and `build` runs in each package. Code shared between the plugins lives in `packages/@repo/*`. Those packages are private and never published, and their code is compiled into each plugin at build time, which is what lets a plugin install as one package with no extra dependencies.
 
 Releases use [changesets](https://github.com/changesets/changesets). A change that should ship gets a changeset, written with `bun run changeset`. At release time, `bun run version` bumps the affected packages and writes their changelogs, and `bun run release` builds and publishes them.
 
 A change is tried in a project before publishing through [yalc](https://github.com/wclr/yalc). `bun run push` sends every package's current build to any linked project, and the same script inside one package sends just that one. A package's `bun run dev` rebuilds and pushes on each change.
+
+The README screenshots come from a demo Studio in `studio/`, which holds only what the screenshots show. It needs a Sanity project of its own, set in `studio/.env.local` as `studio/.env.example` describes, and a login to the Sanity CLI. `bun run seed` in `studio/` loads the demo content from `studio/seed/`. With the packages built and the Studio running through `bun run studio`, `bun run screenshots` captures every screenshot in light and dark into `studio/.screenshots/`, and `bun run screenshots <name>` captures one. The captures are then composited onto their backgrounds in Figma, and each exported frame replaces its image in the package's `assets/` folder.
 
 <br />
 
