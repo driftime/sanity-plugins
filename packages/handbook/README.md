@@ -17,9 +17,11 @@
 
 ## Overview
 
-Every content model comes with knowledge the schema alone cannot hold: what a field is for, which values work best, and how the team writes. Handbook gives that knowledge a place in the Studio, as a tool in the navigation, so an author reaches the guidance beside the content it describes.
+Every content model comes with knowledge the schema alone can't hold: what a field is for, which values work best, and how the site's content should be written. Handbook gives that knowledge a place in the Studio, so authors find the guidance right beside the content it describes.
 
-The first part of the Handbook is generated from the schema. Every document type is listed with its fields, and each field shows its type, its description, an example value, and any tips or cautions written alongside its definition, so the documentation stays in step with the editor it describes. The second part is written by the team. Guides are Portable Text documents for house style, editorial process, and anything too long for a field description, arranged into groups in the same sidebar.
+Most of it needs no writing at all. Handbook reads the documentation straight from the schema, listing every document type and every field with its description, an example value, and any tips or cautions defined alongside it. When the schema changes, the Handbook changes with it.
+
+The rest is written by the site's editors. Guides cover house style, editorial process, and anything too long for a field description, arranged into groups in the same sidebar.
 
 <br />
 
@@ -241,7 +243,7 @@ A guide has a title, an optional description, and a Portable Text body offering:
 
 ### Adding Guides to the Structure
 
-Guides are read in the Handbook tool and written in the Structure tool, and they appear in the Structure tool only once its resolver adds them. `handbookStructure` returns the two list items for that, an editor for the singleton and a list of the guides. It reads the current user from the Structure context, and returns an empty array for anyone who is not an editor, so the resolver needs both of its arguments.
+Guides are read in the Handbook tool and written in the Structure tool, and they appear in the Structure tool only once its resolver adds them. `handbookStructure` returns the two list items for that, an editor for the singleton and a list of the guides in the order they were created. It reads the current user from the Structure context, and returns an empty array for anyone who is not an editor, so the resolver needs both of its arguments.
 
 ```typescript
 import { handbookStructure } from "@driftime/sanity-plugin-handbook";
