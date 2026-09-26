@@ -1,5 +1,11 @@
 # @driftime/sanity-plugin-link
 
+## 0.2.1
+
+### Patch Changes
+
+- aebbd48: Rewrote the type documentation, Studio text, and console messages in plain language.
+
 ## 0.2.0
 
 ### Minor Changes

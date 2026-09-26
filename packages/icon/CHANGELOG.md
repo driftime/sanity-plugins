@@ -1,5 +1,16 @@
 # @driftime/sanity-plugin-icon
 
+## 0.4.0
+
+### Minor Changes
+
+- 725428b: Replaced the bundled Lucide icons with the icon libraries a project installs, read by a build step that each Studio now adds to its Vite or Next.js configuration, and made `library` required.
+
+### Patch Changes
+
+- aebbd48: Rewrote the type documentation and Studio text in plain language.
+- 095b079: Marked the icon picker's search field as a search input, so browsers show a button that clears it.
+
 ## 0.3.0
 
 ### Minor Changes

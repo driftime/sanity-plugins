@@ -1,5 +1,11 @@
 # @driftime/sanity-plugin-color
 
+## 0.1.1
+
+### Patch Changes
+
+- aebbd48: Rewrote the type documentation and Studio text in plain language, including the contrast messages authors see.
+
 ## 0.1.0
 
 ### Minor Changes

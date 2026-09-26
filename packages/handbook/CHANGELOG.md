@@ -1,5 +1,12 @@
 # @driftime/sanity-plugin-handbook
 
+## 0.4.1
+
+### Patch Changes
+
+- 16877a1: Listed the guides in the Structure tool in the order they were created, rather than by last edit.
+- aebbd48: Rewrote the type documentation and Studio text in plain language, including the page on how to use the Handbook.
+
 ## 0.4.0
 
 ### Minor Changes
