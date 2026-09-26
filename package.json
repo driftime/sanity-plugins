@@ -20,7 +20,7 @@
     "push": "bun run --filter './packages/*' push",
     "changeset": "changeset",
     "version": "changeset version",
-    "release": "bun run build && changeset publish"
+    "release": "bun run check && bun run build && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "3.0.2",
