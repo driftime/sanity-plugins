@@ -175,6 +175,7 @@ export function Picker({ library: libraryName, iconStyle, allowed, selected, onS
       <Stack gap={4} padding={4}>
         {!isDefined(result?.problem) && (
           <TextInput
+            type="search"
             icon={<SearchIcon />}
             placeholder="Search by name or keyword"
             value={search}
