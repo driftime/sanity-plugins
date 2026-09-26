@@ -5,13 +5,24 @@ const storageKey = "driftime:sanity-plugin-icon:recent";
 const limit = 8;
 
 /**
+ * Builds the storage key for one library style.
+ *
+ * @param scope - The library and style, such as `phosphor/bold`.
+ * @returns The storage key.
+ */
+function getStorageKey(scope: string) {
+  return `${storageKey}:${scope}`;
+}
+
+/**
  * Reads the recently chosen icons.
  *
+ * @param scope - The library and style, such as `phosphor/bold`.
  * @returns The icon names, most recent first.
  */
-export function readRecent() {
+export function readRecent(scope: string) {
   try {
-    const stored: unknown = JSON.parse(globalThis.localStorage.getItem(storageKey) ?? "[]");
+    const stored: unknown = JSON.parse(globalThis.localStorage.getItem(getStorageKey(scope)) ?? "[]");
     if (!Array.isArray(stored)) return [];
 
     return stored.filter((entry: unknown) => typeof entry === "string");
@@ -23,14 +34,15 @@ export function readRecent() {
 /**
  * Adds an icon to the front of the recent list.
  *
+ * @param scope - The library and style, such as `phosphor/bold`.
  * @param name - The chosen icon's name.
  * @returns The updated icon names, most recent first.
  */
-export function writeRecent(name: string) {
-  const updated = [name, ...readRecent().filter((entry) => entry !== name)].slice(0, limit);
+export function writeRecent(scope: string, name: string) {
+  const updated = [name, ...readRecent(scope).filter((entry) => entry !== name)].slice(0, limit);
 
   try {
-    globalThis.localStorage.setItem(storageKey, JSON.stringify(updated));
+    globalThis.localStorage.setItem(getStorageKey(scope), JSON.stringify(updated));
   } catch {
     // If storage is blocked, the icon just isn't remembered.
   }
@@ -38,10 +50,14 @@ export function writeRecent(name: string) {
   return updated;
 }
 
-/** Clears the recent icons. */
-export function clearRecent() {
+/**
+ * Clears the recent icons.
+ *
+ * @param scope - The library and style, such as `phosphor/bold`.
+ */
+export function clearRecent(scope: string) {
   try {
-    globalThis.localStorage.removeItem(storageKey);
+    globalThis.localStorage.removeItem(getStorageKey(scope));
   } catch {
     // If storage is blocked, there's nothing to clear.
   }

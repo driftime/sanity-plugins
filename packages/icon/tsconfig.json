@@ -1,5 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
-  "compilerOptions": { "rootDir": ".", "paths": { "@/*": ["./src/*"] } },
+  "compilerOptions": {
+    "rootDir": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@driftime/sanity-plugin-icon/sets": ["./src/sets.ts"],
+      "@driftime/sanity-plugin-icon/names": ["./src/names.ts"]
+    }
+  },
   "include": ["**/*.ts", "**/*.tsx"]
 }

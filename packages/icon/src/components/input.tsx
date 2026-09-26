@@ -10,7 +10,7 @@ import { Drawing } from "@/components/drawing";
 import { Picker } from "@/components/picker/picker";
 import { SquareDashedIcon } from "@/icons/square-dashed";
 import type { LibraryIcon } from "@/lib/library";
-import { resolveIconNode, serializeIconNode } from "@/lib/nodes";
+import { resolveIconDrawing, serializeIconDrawing } from "@/lib/nodes";
 import { resolveIconOptions } from "@/lib/options";
 import type { SanityIconConfig, SanityIconOptions } from "@/plugin";
 import type { SanityIcon } from "@/types";
@@ -32,19 +32,26 @@ export type InputProps = ObjectInputProps<Partial<SanityIcon>, IconSchemaType>;
  */
 export function createInput(config: SanityIconConfig) {
   function Input({ id, schemaType, value, onChange, readOnly }: InputProps) {
-    const { name, node } = value ?? {};
+    const { library: storedLibrary, name, node } = value ?? {};
 
     const [open, setOpen] = useState(false);
 
-    const { icons } = resolveIconOptions(schemaType.options, config);
-    const selectedNode = resolveIconNode(node);
-    const selectedLabel = isDefined(name) ? convertCase(name, "sentence") : undefined;
+    const { library, style, icons } = resolveIconOptions(schemaType.options, config);
+    const selectedDrawing = resolveIconDrawing(node);
+    const selectedName = storedLibrary === library ? name : undefined;
+    const selectedLabel = isDefined(name) ? convertCase(name, "title") : undefined;
 
     function handleSelect(icon: LibraryIcon) {
       onChange([
         setIfMissing({ _type: iconTypeName satisfies SanityIcon["_type"] }),
+        isDefined(library)
+          ? set(library, ["library" satisfies keyof SanityIcon])
+          : unset(["library" satisfies keyof SanityIcon]),
+        isDefined(style)
+          ? set(style, ["style" satisfies keyof SanityIcon])
+          : unset(["style" satisfies keyof SanityIcon]),
         set(icon.name, ["name" satisfies keyof SanityIcon]),
-        set(serializeIconNode(icon.node), ["node" satisfies keyof SanityIcon]),
+        set(serializeIconDrawing(icon.drawing), ["node" satisfies keyof SanityIcon]),
       ]);
 
       setOpen(false);
@@ -57,8 +64,8 @@ export function createInput(config: SanityIconConfig) {
           type="button"
           mode="ghost"
           icon={
-            isDefined(selectedNode) ? (
-              <Drawing node={selectedNode} {...defaultIconProps} />
+            isDefined(selectedDrawing) ? (
+              <Drawing drawing={selectedDrawing} width="1em" height="1em" />
             ) : (
               <SquareDashedIcon {...defaultIconProps} />
             )
@@ -87,8 +94,10 @@ export function createInput(config: SanityIconConfig) {
         {open && (
           <Picker
             id={`${id}-library`}
+            library={library}
+            iconStyle={style}
             allowed={icons}
-            selected={name}
+            selected={selectedName}
             onSelect={handleSelect}
             onClose={() => {
               setOpen(false);

@@ -4,7 +4,7 @@
 import type { ComponentProps } from "react";
 
 import { Drawing } from "@/components/drawing";
-import { resolveIconNode } from "@/lib/nodes";
+import { resolveIconDrawing } from "@/lib/nodes";
 import type { SanityIcon } from "@/types";
 
 /**
@@ -24,5 +24,5 @@ export type SanityIconProps = Omit<ComponentProps<"svg">, "children"> & {
  * @public
  */
 export function Icon({ value, ...props }: SanityIconProps) {
-  return <Drawing node={resolveIconNode(value?.node)} {...props} />;
+  return <Drawing drawing={resolveIconDrawing(value?.node)} {...props} />;
 }

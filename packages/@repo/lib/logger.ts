@@ -8,7 +8,7 @@ const prefixStyle = "color: #2276fc";
  * Browser consoles show the prefix in blue.
  *
  * @param name - The package name to prefix messages with.
- * @returns Functions that log a warning or an error, or format a message to throw.
+ * @returns Functions that log progress, a warning, or an error, or format a message to throw.
  */
 export function createLogger(name: string) {
   const prefix = `[${name}]`;
@@ -24,6 +24,14 @@ export function createLogger(name: string) {
   }
 
   return {
+    /**
+     * Logs progress worth seeing, such as what a build step did, in development builds only.
+     *
+     * @param message - What happened.
+     */
+    info(message: string) {
+      if (isDevelopment) console.info(`%c${prefix}%c ${message}`, prefixStyle, "");
+    },
     /**
      * Logs a warning about something the plugin recovered from, in development builds only.
      *

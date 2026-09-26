@@ -5,6 +5,7 @@ import type { ChangeEvent, ComponentProps, KeyboardEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 
 import { Library } from "@/components/picker/library";
+import { Problem } from "@/components/picker/problem";
 import { Recent } from "@/components/picker/recent";
 import { Tooltip } from "@/components/picker/tooltip";
 import { gridHeight, gridRowHeight } from "@/config/grid";
@@ -14,21 +15,24 @@ import { useRecentIcons } from "@/hooks/use-recent-icons";
 import { getCenteredScrollTop, getNextIndex, getRevealedScrollTop, getVisibleRows } from "@/lib/grid";
 import type { LibraryIcon } from "@/lib/library";
 import { normalizeTerms, selectIcons } from "@/lib/library";
-import type { SanityIconName } from "@/plugin";
+import { getIconSetKey } from "@/lib/registry";
 
 export type PickerProps = Omit<
   ComponentProps<typeof Dialog>,
   "children" | "header" | "width" | "selected" | "onSelect"
 > & {
-  allowed: SanityIconName[] | undefined;
+  library: string | undefined;
+  iconStyle: string | undefined;
+  allowed: string[] | undefined;
   selected: string | undefined;
   onSelect: (icon: LibraryIcon) => void;
 };
 
-export function Picker({ allowed, selected, onSelect, ...props }: PickerProps) {
-  const library = useIconLibrary();
+export function Picker({ library: libraryName, iconStyle, allowed, selected, onSelect, ...props }: PickerProps) {
+  const result = useIconLibrary(libraryName, iconStyle);
+  const library = result?.icons;
   const icons = selectIcons(library ?? [], allowed);
-  const { recent, remember, forget } = useRecentIcons();
+  const { recent, remember, forget } = useRecentIcons(getIconSetKey(libraryName ?? "", iconStyle ?? "default"));
 
   const [search, setSearch] = useState("");
   const [scrollRow, setScrollRow] = useState(0);
@@ -169,20 +173,23 @@ export function Picker({ allowed, selected, onSelect, ...props }: PickerProps) {
   return (
     <Dialog header="Select icon" width={1} {...props}>
       <Stack gap={4} padding={4}>
-        <TextInput
-          icon={<SearchIcon />}
-          placeholder="Search by name or keyword"
-          value={search}
-          onChange={handleSearch}
-          onKeyDown={handleSearchKeyDown}
-          disabled={!isDefined(library) || icons.length === 0}
-          aria-label="Search the icon library"
-        />
-        {!isDefined(library) && (
+        {!isDefined(result?.problem) && (
+          <TextInput
+            icon={<SearchIcon />}
+            placeholder="Search by name or keyword"
+            value={search}
+            onChange={handleSearch}
+            onKeyDown={handleSearchKeyDown}
+            disabled={!isDefined(library) || !isDefined(icons)}
+            aria-label="Search the icon library"
+          />
+        )}
+        {!isDefined(result) && (
           <Flex align="center" justify="center" style={{ height: gridHeight }}>
             <Spinner muted />
           </Flex>
         )}
+        {isDefined(result?.problem) && <Problem problem={result.problem} />}
         {isDefined(recentIcons) && (
           <Recent
             icons={recentIcons}
@@ -200,14 +207,14 @@ export function Picker({ allowed, selected, onSelect, ...props }: PickerProps) {
                 All icons ({results.length.toLocaleString("en-US")})
               </Text>
             </Box>
-            {icons.length === 0 && (
-              <Flex align="center" justify="center" style={{ height: gridHeight }}>
+            {!isDefined(icons) && (
+              <Flex align="center" justify="center" paddingTop={5} paddingBottom={6}>
                 <Text size={1} muted>
                   No icons available.
                 </Text>
               </Flex>
             )}
-            {icons.length > 0 && (
+            {isDefined(icons) && (
               <Library
                 ref={scroller}
                 icons={results}
@@ -226,7 +233,7 @@ export function Picker({ allowed, selected, onSelect, ...props }: PickerProps) {
             )}
           </Stack>
         )}
-        <Tooltip key={hovered?.icon.name} hovered={hovered} />
+        <Tooltip key={hovered?.icon.name} hovered={hovered} query={query} />
       </Stack>
     </Dialog>
   );

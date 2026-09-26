@@ -1,15 +1,22 @@
 {
   "name": "@driftime/sanity-plugin-icon",
   "version": "0.3.0",
-  "description": "Lucide icons for Sanity Studio, stored as SVG and rendered without the library.",
+  "description": "Icons for Sanity Studio, managed as content by the authors who use them.",
   "keywords": [
+    "central-icons",
+    "heroicons",
+    "hugeicons",
     "icon",
     "icon-picker",
+    "iconoir",
     "icons",
     "lucide",
+    "nucleo",
+    "phosphor-icons",
     "sanity",
     "sanity-plugin",
-    "svg"
+    "svg",
+    "tabler-icons"
   ],
   "homepage": "https://github.com/driftime/sanity-plugins/tree/main/packages/icon#readme",
   "bugs": {
@@ -41,12 +48,42 @@
       "source": "./src/render.ts",
       "default": "./dist/render.js"
     },
+    "./vite": {
+      "source": "./src/vite.ts",
+      "default": "./dist/vite.js"
+    },
+    "./next": {
+      "source": "./src/next.ts",
+      "default": "./dist/next.js"
+    },
+    "./next-loader": {
+      "source": "./src/next-loader.ts",
+      "default": "./dist/next-loader.js"
+    },
+    "./read-worker": {
+      "source": "./src/read-worker.ts",
+      "default": "./dist/read-worker.js"
+    },
+    "./sets": {
+      "source": "./src/sets.ts",
+      "default": "./dist/sets.js"
+    },
+    "./names": {
+      "source": "./src/names.ts",
+      "default": "./dist/names.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
       "./render": "./dist/render.js",
+      "./vite": "./dist/vite.js",
+      "./next": "./dist/next.js",
+      "./next-loader": "./dist/next-loader.js",
+      "./read-worker": "./dist/read-worker.js",
+      "./sets": "./dist/sets.js",
+      "./names": "./dist/names.js",
       "./package.json": "./package.json"
     },
     "access": "public"
@@ -54,7 +91,7 @@
   "scripts": {
     "typecheck": "tsc",
     "dev": "plugin-kit link-watch",
-    "build": "bun run typecheck && plugin-kit verify-package --silent && pkg-utils build --strict --check --clean && node --check dist/index.js && node --check dist/render.js",
+    "build": "bun run typecheck && plugin-kit verify-package --silent && pkg-utils build --strict --check --clean && node --check dist/index.js && node --check dist/render.js && node --check dist/vite.js && node --check dist/next.js",
     "prepublishOnly": "bun run build",
     "push": "yalc push"
   },
@@ -62,7 +99,7 @@
     "@sanity/client": "^7.26.2 || ^8.0.0",
     "@sanity/icons": "^5.2.1",
     "@sanity/ui": "^4.0.3",
-    "lucide-static": "^1.44.0"
+    "svgo": "^4.1.0"
   },
   "devDependencies": {
     "@repo/components": "workspace:*",

@@ -1,9 +1,8 @@
-import { defaultIconProps } from "@repo/lib/icons";
 import { isDefined } from "@repo/lib/utils";
 import { createElement } from "react";
 
 import { Drawing } from "@/components/drawing";
-import { resolveIconNode } from "@/lib/nodes";
+import { resolveIconDrawing } from "@/lib/nodes";
 import type { SanityIcon } from "@/types";
 
 /**
@@ -14,10 +13,10 @@ import type { SanityIcon } from "@/types";
  * @public
  */
 export function createIconPreview(value: SanityIcon | undefined) {
-  const node = resolveIconNode(value?.node);
-  if (!isDefined(node)) return undefined;
+  const drawing = resolveIconDrawing(value?.node);
+  if (!isDefined(drawing)) return undefined;
 
   return function IconPreview() {
-    return createElement(Drawing, { node, ...defaultIconProps });
+    return createElement(Drawing, { drawing, width: "1em", height: "1em" });
   };
 }

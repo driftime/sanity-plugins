@@ -1,3 +1,4 @@
+import { isDefined } from "@repo/lib/utils";
 import { Box, Button, Flex, Grid, Text } from "@sanity/ui";
 import type { ComponentProps, RefObject } from "react";
 
@@ -35,14 +36,19 @@ export function Library({
   const visible = icons.slice(firstRow * gridColumns, lastRow * gridColumns);
 
   return (
-    <Box role="listbox" aria-label="Icon library" style={{ height: gridHeight, overflowY: "auto" }} {...props}>
-      {icons.length === 0 && (
-        <Flex align="center" justify="center" direction="column" gap={3} style={{ height: gridHeight }}>
+    <Box
+      role="listbox"
+      aria-label="Icon library"
+      style={isDefined(icons) ? { height: gridHeight, overflowY: "auto" } : undefined}
+      {...props}
+    >
+      {!isDefined(icons) && (
+        <Flex align="center" justify="center" direction="column" gap={3} paddingTop={5} paddingBottom={6}>
           <Text size={1} muted>{`Nothing matches "${search}".`}</Text>
           <Button type="button" mode="ghost" text="Clear search" onClick={onClearSearch} />
         </Flex>
       )}
-      {icons.length > 0 && (
+      {isDefined(icons) && (
         <Grid
           gridTemplateColumns={gridColumns}
           style={{

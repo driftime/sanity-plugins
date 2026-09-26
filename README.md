@@ -29,7 +29,7 @@ Schema-driven documentation and editorial guides, built right into Sanity Studio
 
 ### <picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/driftime/sanity-plugins/HEAD/packages/icon/assets/icon-dark.svg" /><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/driftime/sanity-plugins/HEAD/packages/icon/assets/icon-light.svg" /><img src="https://raw.githubusercontent.com/driftime/sanity-plugins/HEAD/packages/icon/assets/icon-light.svg" alt="" width="24" height="24" align="top" /></picture> Icon
 
-Lucide icons for Sanity Studio, stored as SVG and rendered without the library.
+Icons for Sanity Studio, managed as content by the authors who use them.
 
 [Read the docs](packages/icon/README.md) · [`@driftime/sanity-plugin-icon`](https://www.npmjs.com/package/@driftime/sanity-plugin-icon)
 

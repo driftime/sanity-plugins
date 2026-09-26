@@ -1,7 +1,9 @@
-import type iconNodes from "lucide-static/icon-nodes.json";
-import type { ObjectOptions, TypeAliasDefinition } from "sanity";
+import type { SanityIconNames } from "@driftime/sanity-plugin-icon/names";
+import type { BaseSchemaTypeOptions, TypeAliasDefinition } from "sanity";
 import { definePlugin } from "sanity";
 
+import { pluginName } from "@/config/defaults";
+import type { iconLibraryStyles } from "@/lib/libraries";
 import { createIconType } from "@/schemas/types/icon";
 import type { iconTypeName } from "@/types";
 
@@ -12,23 +14,66 @@ declare module "@sanity/types" {
   }
 }
 
-/**
- * Names of every Lucide icon, read from the installed Lucide release, so icons added after this plugin's
- * release still autocomplete.
- *
- * @public
- */
-export type SanityIconName = keyof typeof iconNodes;
+/** Styles of each supported library, from the plugin's own list. */
+type IconLibraryStyles = typeof iconLibraryStyles;
 
 /**
- * Options for an icon field. A field's own icons replace the plugin's.
+ * Identifier of a library the plugin supports.
  *
  * @public
  */
-export interface SanityIconOptions extends ObjectOptions {
-  /** Icons authors can choose from, in the order listed. Defaults to every icon. */
-  icons?: SanityIconName[];
-}
+export type SanityIconLibrary = keyof IconLibraryStyles;
+
+/**
+ * Styles a library offers. The project's own icon folders have one style, `default`.
+ *
+ * @public
+ */
+export type SanityIconStyle<Library extends string> = Library extends SanityIconLibrary
+  ? IconLibraryStyles[Library][number]
+  : "default";
+
+/**
+ * Names of a library's icons, once the build step has listed the installed version's, or any name before then.
+ *
+ * @public
+ */
+export type SanityIconName<Library extends string> = Library extends keyof SanityIconNames
+  ? SanityIconNames[Library]
+  : string;
+
+/** Libraries the build step has listed, or any identifier before it has, so the project's own folders can be named. */
+type ListedLibraryId = [keyof SanityIconNames] extends [never]
+  ? string & NonNullable<unknown>
+  : Extract<keyof SanityIconNames, string>;
+
+/** Libraries a field can name: the supported ones, plus the project's own folders. */
+type IconLibraryId = SanityIconLibrary | ListedLibraryId;
+
+/**
+ * A choice of library, style, and icons, where the style and icons are checked against the library.
+ *
+ * @public
+ */
+export type SanityIconSelection = {
+  [Library in IconLibraryId]: {
+    /** Identifier of the icon library, such as `phosphor`. */
+    library: Library;
+    /** Identifier of the library style, such as `bold`. Defaults to the library's first style. */
+    style?: SanityIconStyle<Library>;
+    /** Icons authors can choose from, in the order listed. Defaults to every icon. */
+    icons?: SanityIconName<Library>[];
+  };
+}[IconLibraryId];
+
+/**
+ * Options for an icon field. A field that names a library replaces the plugin's library, style, and icons, and one
+ * that doesn't uses the plugin's.
+ *
+ * @public
+ */
+export type SanityIconOptions = BaseSchemaTypeOptions &
+  (SanityIconSelection | { library?: undefined; style?: undefined; icons?: undefined });
 
 /**
  * Definition of a field or array member holding an icon, so its options are type-checked like a
@@ -42,30 +87,27 @@ export interface SanityIconDefinition extends Omit<TypeAliasDefinition<typeof ic
 }
 
 /**
- * Plugin configuration. Every option is optional.
+ * Plugin configuration, naming the library every icon field uses unless it names its own.
  *
  * @public
  */
-export interface SanityIconConfig {
-  /** Icons authors can choose from, in the order listed. Defaults to every icon. */
-  icons?: SanityIconName[];
-}
+export type SanityIconConfig = SanityIconSelection;
 
 const plugin = definePlugin<SanityIconConfig>((config) => ({
-  name: "@driftime/sanity-plugin-icon",
+  name: pluginName,
   schema: {
     types: [createIconType(config)],
   },
 }));
 
 /**
- * Adds an icon field type to Sanity Studio, with a searchable picker for the Lucide library that stores
- * the chosen icon's drawing.
+ * Adds an icon field type to Sanity Studio, with a searchable picker for the installed icon libraries that
+ * stores the chosen icon's drawing.
  *
  * @param config - The plugin configuration.
  * @returns The plugin.
  * @public
  */
-export function iconPlugin(config: SanityIconConfig = {}) {
+export function iconPlugin(config: SanityIconConfig) {
   return plugin(config);
 }

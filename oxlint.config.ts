@@ -184,6 +184,13 @@ export default defineConfig({
   },
   overrides: [
     {
+      files: ["packages/@repo/lib/**"],
+      rules: {
+        // Shared helpers must stay safe to import from a plugin's render entry, which never loads the Studio.
+        "no-restricted-imports": ["error", { paths: ["react-dom", "sanity"], patterns: ["@sanity/*"] }],
+      },
+    },
+    {
       files: ["packages/icon/**"],
       rules: {
         // The virtualised icon grid can't use native list elements, so ARIA roles give it list semantics.
@@ -191,10 +198,10 @@ export default defineConfig({
       },
     },
     {
-      files: ["packages/@repo/lib/**"],
+      files: ["packages/icon/src/read-worker.ts"],
       rules: {
-        // Shared helpers must stay safe to import from a plugin's render entry, which never loads the Studio.
-        "no-restricted-imports": ["error", { paths: ["react-dom", "sanity"], patterns: ["@sanity/*"] }],
+        // A worker thread posts to its parent through Node's message port, which has no target origin.
+        "unicorn/require-post-message-target-origin": "off",
       },
     },
   ],

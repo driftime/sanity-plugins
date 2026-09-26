@@ -21,7 +21,7 @@ export function createIconType(config: SanityIconConfig) {
     name: iconTypeName satisfies SanityIcon["_type"],
     type: "object",
     icon: createSanityIcon(SquareDashedIcon),
-    description: "Icon chosen from the Lucide library.",
+    description: "Icon chosen from an icon library.",
     // Uses a primitive field's flat frame on purpose, instead of Sanity's collapsible object fieldset.
     components: { field: Field, input: createInput(config) },
     validation: (rule) =>
@@ -37,16 +37,26 @@ export function createIconType(config: SanityIconConfig) {
         const { name, node } = selection;
 
         return {
-          title: isDefined(name) ? convertCase(name, "sentence") : "No icon",
+          title: isDefined(name) ? convertCase(name, "title") : "No icon",
           media: createIconPreview({ _type: iconTypeName, name, node }),
         };
       },
     },
     fields: [
       defineField({
+        name: "library" satisfies keyof SanityIcon,
+        type: "string",
+        description: "Identifier of the library the icon came from.",
+      }),
+      defineField({
+        name: "style" satisfies keyof SanityIcon,
+        type: "string",
+        description: "Identifier of the library style the icon came from.",
+      }),
+      defineField({
         name: "name" satisfies keyof SanityIcon,
         type: "string",
-        description: "Name of the icon in Lucide.",
+        description: "Name of the icon in its library.",
       }),
       defineField({
         name: "node" satisfies keyof SanityIcon,

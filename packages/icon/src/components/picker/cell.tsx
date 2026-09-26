@@ -31,7 +31,7 @@ export function Cell({ icon, selected, focusable, position, total, onSelect, onH
       selected={selected}
       padding={0}
       style={{ width: gridCellSize, height: gridCellSize }}
-      icon={<Drawing node={icon.node} width="1.25em" height="1.25em" strokeWidth={1.5} />}
+      icon={<Drawing drawing={icon.drawing} width="1.25em" height="1.25em" />}
       aria-label={icon.label}
       onClick={() => {
         onSelect(icon);

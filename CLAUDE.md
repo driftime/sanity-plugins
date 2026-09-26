@@ -48,7 +48,7 @@
 
 **Cross-references.** The split is about where things are defined, not a rule that imports only go one way. The only hard rule is that no import may create a module cycle.
 
-**Two entry points.** A field plugin exposes `.` for the Studio and `./render` for the site, and nothing reachable from `render.ts` may import `sanity` or `@sanity/ui`. Handbook is a tool and only has `.`.
+**Two entry points.** A field plugin exposes `.` for the Studio and `./render` for the site, and nothing reachable from `render.ts` may import `sanity` or `@sanity/ui`. Handbook is a tool and only has `.`. A plugin with a build step, such as Icon, adds an entry for each bundler it supports and any files that step needs, and its own `CLAUDE.md` lists them.
 
 **The stored format.** How a value is stored is the plugin's own business. Parsing, serialising, and stega cleaning stay internal, and public helpers take a whole stored value, never part of one.
 
