@@ -1,5 +1,11 @@
 # @driftime/sanity-plugin-icon
 
+## 0.4.1
+
+### Patch Changes
+
+- 3fcb9be: Fixed Next.js builds that started without a cache, which failed to find the converted icon sets or read one half-written.
+
 ## 0.4.0
 
 ### Minor Changes
