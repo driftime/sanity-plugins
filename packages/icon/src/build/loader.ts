@@ -1,11 +1,12 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { isRecord } from "@repo/lib/utils";
 
 import { writeIconNames } from "@/build/names";
 import { listPluginFiles } from "@/build/packages";
-import { createRegistryModule } from "@/build/registry";
+import { createRegistryModule, getSetsFolder } from "@/build/registry";
 import { describeReport, detectLibraries, listRegistryDependencies, loadIconSet } from "@/build/sets";
 import { logger } from "@/config/defaults";
 
@@ -53,7 +54,7 @@ async function generateRegistryOnce(resourcePath: string, options: unknown) {
   );
 
   const cacheDir = path.join(root, "node_modules", ".cache");
-  const setsDir = path.join(cacheDir, "driftime-icon", "sets");
+  const setsDir = getSetsFolder(root);
   await mkdir(setsDir, { recursive: true });
 
   const libraries = await detectLibraries(root, folders);
@@ -66,8 +67,11 @@ async function generateRegistryOnce(resourcePath: string, options: unknown) {
         const { adapter } = library;
         const { set, report } = await loadIconSet(library, style, { root, cacheDir });
         const file = path.join(setsDir, `${adapter.library}-${style}.json`);
+        const temporary = `${file}.${randomUUID()}.tmp`;
 
-        await writeFile(file, JSON.stringify(set));
+        // The browser and server builds convert at once, even in one process, so each set is swapped in whole.
+        await writeFile(temporary, JSON.stringify(set));
+        await rename(temporary, file);
         logger.info(describeReport(adapter.label, style, report));
 
         return { library: adapter.library, style, set, file };

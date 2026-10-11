@@ -1,7 +1,8 @@
+import { mkdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { isRegistryModule, registryModulePath } from "@/build/registry";
+import { getSetsFolder, isRegistryModule, registryModulePath } from "@/build/registry";
 import type { SanityIconBuildOptions } from "@/build/vite";
 
 /** A webpack rule, limited to what the build step adds. */
@@ -56,6 +57,9 @@ const loaderPath = fileURLToPath(new URL("next-loader.js", import.meta.url));
 export function withIcons(options: SanityIconBuildOptions = {}) {
   const loader = { loader: loaderPath, options: { custom: options.custom ?? {} } };
   const placeholder = path.basename(path.dirname(path.dirname(registryModulePath)));
+
+  // Turbopack never finds files in a folder that was missing when the build started, so it's made before then.
+  mkdirSync(getSetsFolder(process.cwd()), { recursive: true });
 
   return function extendConfig<Config extends SanityIconNextConfig>(config: Config): Config {
     const { turbopack, webpack } = config;
