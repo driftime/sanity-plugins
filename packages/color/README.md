@@ -229,6 +229,46 @@ A field sets the same option under `options`, and a key it leaves out keeps the 
 
 <br />
 
+### Initial Values
+
+A field's `initialValue` sets the colors a new document starts with. `background` and `text` each take a palette name, an image swatch such as `image:vibrant`, or a custom hex code, and either can be left out to start empty.
+
+```typescript
+defineField({
+  name: "banner",
+  type: "color",
+  description: "Colors behind the banner.",
+  initialValue: { background: "sky" },
+});
+```
+
+A swatch's hex is stored once the document's image has produced that swatch. This is separate from `custom.initial`, which only sets where a custom color starts in the picker.
+
+<br />
+
+### Typing Palette Names
+
+Palette names in `colors` and `initialValue` are plain strings unless the palette is registered with the plugin's types. Registering it is optional. Once it is, the names complete as they're typed, and a name in `colors` that the palette doesn't have is a compile error. The declaration goes next to the palette, and since it's types only, the module still carries no Studio code.
+
+```typescript
+// config/palette.ts
+import { defineColorPalette } from "@driftime/sanity-plugin-color/render";
+
+declare module "@driftime/sanity-plugin-color" {
+  interface SanityColorRegister {
+    palette: typeof palette;
+  }
+}
+
+export const palette = defineColorPalette({
+  // ...
+});
+```
+
+`initialValue` also accepts custom values, so a misspelled name there is still accepted as a string.
+
+<br />
+
 ### Previewing the Pairing
 
 The chosen pairing is previewed beside the pickers as a small specimen of two letters. Where the color will sit behind running text, `preview.text` replaces the specimen with a full-width panel below the pickers that shows the sentence given.
@@ -499,6 +539,7 @@ A palette color is stored by name, a custom color as its hex code, and an image 
 | `SanityColorConfig`     | `@driftime/sanity-plugin-color`        | Everything `colorPlugin` accepts.                     |
 | `SanityColorOptions`    | `@driftime/sanity-plugin-color`        | The `options` a color field accepts.                  |
 | `SanityColorDefinition` | `@driftime/sanity-plugin-color`        | A field or array member of type `color`.              |
+| `SanityColorRegister`   | `@driftime/sanity-plugin-color`        | Where the palette is registered for typed names.      |
 | `SanityColorPicker`     | `@driftime/sanity-plugin-color`        | `"background"` or `"text"`.                           |
 | `SanityColorSource`     | `@driftime/sanity-plugin-color`        | `"palette"`, `"image"`, or `"custom"`.                |
 | `SanityColorImage`      | `@driftime/sanity-plugin-color`        | The `image` option.                                   |

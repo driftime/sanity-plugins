@@ -1,11 +1,11 @@
-import type { ObjectOptions, ObjectSchemaType, TypeAliasDefinition } from "sanity";
+import type { InitialValueProperty, ObjectOptions, ObjectSchemaType, TypeAliasDefinition } from "sanity";
 import { definePlugin } from "sanity";
 
 import { pluginName } from "@/config/defaults";
 import type { SanityColorStandard } from "@/lib/contrast";
 import type { SanityColorPalette } from "@/lib/palette";
 import { createColorType } from "@/schemas/types/color";
-import type { SanityColorSwatchName, colorTypeName } from "@/types";
+import type { SanityColor, SanityColorSwatchName, colorTypeName } from "@/types";
 
 declare module "@sanity/types" {
   interface IntrinsicDefinitions {
@@ -13,6 +13,20 @@ declare module "@sanity/types" {
     color: SanityColorDefinition;
   }
 }
+
+/**
+ * Registers the site's palette with the plugin's types, so color fields complete its names. Optional: without it,
+ * fields accept any name. Augment it with a `palette` property typed as the palette.
+ *
+ * @public
+ */
+// oxlint-disable-next-line typescript/no-empty-interface, typescript/no-empty-object-type -- Consumers augment it, so it ships empty.
+export interface SanityColorRegister {}
+
+/** Names of the registered palette's colors, or any name when no palette is registered. */
+type RegisteredColorName = SanityColorRegister extends { palette: infer Palette }
+  ? Extract<keyof Palette, string>
+  : string;
 
 /**
  * A color authors can set.
@@ -78,7 +92,7 @@ export interface SanityColorInitial {
  *
  * @public
  */
-export interface SanityColorOptions<TName extends string = string> extends ObjectOptions {
+export interface SanityColorOptions<TName extends string = RegisteredColorName> extends ObjectOptions {
   /** Colors authors can set. Defaults to both. */
   pickers?: SanityColorPicker[];
   /** Where the pickers' colors come from. Defaults to the palette and custom colors. */
@@ -96,14 +110,19 @@ export interface SanityColorOptions<TName extends string = string> extends Objec
 }
 
 /**
- * Definition of a field or array member holding a color, so its options are type-checked like a
+ * Definition of a field or array member holding a color, so its options and initial value are type-checked like a
  * built-in type's.
  *
  * @public
  */
-export interface SanityColorDefinition extends Omit<TypeAliasDefinition<typeof colorTypeName, undefined>, "options"> {
+export interface SanityColorDefinition extends Omit<
+  TypeAliasDefinition<typeof colorTypeName, undefined>,
+  "options" | "initialValue"
+> {
   /** Options for the field. */
   options?: SanityColorOptions;
+  /** Colors the field starts with, or a function that returns them. */
+  initialValue?: InitialValueProperty<unknown, Pick<SanityColor, "background" | "text">>;
 }
 
 /**
