@@ -1,5 +1,11 @@
 # @driftime/sanity-plugin-icon
 
+## 0.4.2
+
+### Patch Changes
+
+- ee7132a: Added `initialValue` to icon fields, as an icon name that completes from the installed icon libraries. The Studio saves the icon's drawing the first time the field is shown.
+
 ## 0.4.1
 
 ### Patch Changes

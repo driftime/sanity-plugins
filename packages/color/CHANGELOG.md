@@ -1,5 +1,11 @@
 # @driftime/sanity-plugin-color
 
+## 0.1.2
+
+### Patch Changes
+
+- 6f08459: Typed `initialValue` on color fields, and added `SanityColorRegister`, which a project can optionally augment with its palette so palette names complete in `colors` and `initialValue`.
+
 ## 0.1.1
 
 ### Patch Changes
