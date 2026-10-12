@@ -134,8 +134,13 @@
 
 ## Releasing
 
-Claude runs the release when asked, and confirms before publishing and before pushing.
+When the user says they're ready to release, Claude walks them through the same steps every time. The user runs the commands that publish or need their npm account, and Claude does everything else. At each of the user's steps, Claude gives the exact commands and waits for the user to say they're done before going on.
 
 **Record.** Every change that reaches a published package gets a changeset in `.changeset/` as part of the work, with the packages, the bump, and one consumer-facing line in American English, in the past tense. Before 1.0, a breaking change bumps the minor version and anything else bumps the patch.
 
-**Release.** `bun run version` applies the changesets. Check the bumps and `CHANGELOG.md` entries it writes, fix their wording there, and commit as "Version packages". `bun run release` checks formatting and linting, builds every package, then publishes and tags `<package>@<version>`. Then run `git push --follow-tags`, and for each new tag run `gh release create <tag> --title <tag> --prerelease` with that version's changelog section as the notes.
+**Release.** The steps alternate between the user and Claude:
+
+1. The user runs `bun run version`, which applies the changesets.
+2. Claude checks the bumps and `CHANGELOG.md` entries it wrote, fixes their wording there, and commits as "Version packages".
+3. The user runs `npm login`, which publishing requires, then `bun run release`, which checks formatting and linting, builds every package, then publishes and tags `<package>@<version>`.
+4. Claude runs `git push --follow-tags`, then for each new tag runs `gh release create <tag> --title <tag> --prerelease` with that version's changelog section as the notes.
