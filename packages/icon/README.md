@@ -380,7 +380,7 @@ When nothing readable is stored, it returns `undefined` and the preview falls ba
 
 ## Site
 
-On the site, one component draws a stored icon, and it's imported from `@driftime/sanity-plugin-icon/render`. That path carries no Studio code, so it's safe in server components and anywhere else on the site.
+On the site, `Icon` draws a stored icon, and `getIcon` finds an icon the site chooses itself. Both are imported from `@driftime/sanity-plugin-icon/render`. That path carries no Studio code, so it's safe in server components and anywhere else on the site.
 
 <br />
 
@@ -428,6 +428,41 @@ An icon needs nothing special in a query. It comes back as a plain object with t
 ```groq
 *[_type == "home"][0] { title, icon }
 ```
+
+<br />
+
+### Looking Up Icons
+
+Some icons are chosen by the site rather than by an author, such as a default for an icon field left empty. `getIcon` finds an icon by name in an installed icon library and returns it as the Studio stores it, so `Icon` draws it the same way as an icon an author chose.
+
+```tsx
+import { getIcon, Icon } from "@driftime/sanity-plugin-icon/render";
+import type { SanityIcon } from "@driftime/sanity-plugin-icon/render";
+
+interface FeatureProps {
+  icon: SanityIcon | undefined;
+  title: string;
+}
+
+export async function Feature({ icon, title }: FeatureProps) {
+  const value = icon ?? (await getIcon({ library: "lucide", name: "house" }));
+
+  return (
+    <article>
+      <Icon value={value} className="size-8" />
+      <h3>{title}</h3>
+    </article>
+  );
+}
+```
+
+| Input     | Type                | Default             | Purpose                                                                     |
+| --------- | ------------------- | ------------------- | --------------------------------------------------------------------------- |
+| `library` | `SanityIconLibrary` | required            | The identifier of the icon library.                                         |
+| `style`   | `SanityIconStyle`   | the library's first | The style the icon is drawn in.                                             |
+| `name`    | `SanityIconName`    | required            | The icon's name, which completes as it's typed once the build step has run. |
+
+It reads the icon libraries the build step converts, so the site's own build needs the build step, as [Adding the Build Step](#adding-the-build-step) describes. It returns `undefined` when the build step hasn't run, or when the icon library, style, or name isn't installed. The first call for a style loads every icon in that style, so it suits server components and images rendered on the server better than the browser.
 
 <br />
 
@@ -481,6 +516,7 @@ The drawing is written with the name, which is what lets an icon render without 
 | `iconLibraries(options?)`  | `@driftime/sanity-plugin-icon/vite`   | The build step as a Vite plugin, for a framework's list. |
 | `withIcons(options?)`      | `@driftime/sanity-plugin-icon/next`   | Adds the build step to a Next.js configuration.          |
 | `Icon`                     | `@driftime/sanity-plugin-icon/render` | Draws a stored icon.                                     |
+| `getIcon(lookup)`          | `@driftime/sanity-plugin-icon/render` | Finds an icon by name in an installed icon library.      |
 
 <br />
 
@@ -503,6 +539,7 @@ The drawing is written with the name, which is what lets an icon render without 
 | `SanityIconWebpackCustomizer` | `@driftime/sanity-plugin-icon/next`   | A Next.js `webpack` option the build step runs first.                 |
 | `SanityIconProps`             | `@driftime/sanity-plugin-icon/render` | Everything `Icon` accepts: an `svg` element's props and `value`.      |
 | `SanityIcon`                  | `@driftime/sanity-plugin-icon/render` | A stored icon, with its icon library, its name, and its drawing.      |
+| `SanityIconLookup`            | `@driftime/sanity-plugin-icon/render` | Everything `getIcon` accepts: an icon library, a style, and a name.   |
 
 <br />
 

@@ -1,11 +1,9 @@
-import type { SanityIconNames } from "@driftime/sanity-plugin-icon/names";
 import type { BaseSchemaTypeOptions, InitialValueProperty, TypeAliasDefinition } from "sanity";
 import { definePlugin } from "sanity";
 
 import { pluginName } from "@/config/defaults";
-import type { iconLibraryStyles } from "@/lib/libraries";
 import { createIconType } from "@/schemas/types/icon";
-import type { iconTypeName } from "@/types";
+import type { IconLibraryId, ListedLibraryId, SanityIconName, SanityIconStyle, iconTypeName } from "@/types";
 
 declare module "@sanity/types" {
   interface IntrinsicDefinitions {
@@ -13,42 +11,6 @@ declare module "@sanity/types" {
     icon: SanityIconDefinition;
   }
 }
-
-/** Styles of each supported library, from the plugin's own list. */
-type IconLibraryStyles = typeof iconLibraryStyles;
-
-/**
- * Identifier of a library the plugin supports.
- *
- * @public
- */
-export type SanityIconLibrary = keyof IconLibraryStyles;
-
-/**
- * Styles a library offers. The project's own icon folders have one style, `default`.
- *
- * @public
- */
-export type SanityIconStyle<Library extends string> = Library extends SanityIconLibrary
-  ? IconLibraryStyles[Library][number]
-  : "default";
-
-/**
- * Names of a library's icons, once the build step has listed the installed version's, or any name before then.
- *
- * @public
- */
-export type SanityIconName<Library extends string> = Library extends keyof SanityIconNames
-  ? SanityIconNames[Library]
-  : string;
-
-/** Libraries the build step has listed, or any identifier before it has, so the project's own folders can be named. */
-type ListedLibraryId = [keyof SanityIconNames] extends [never]
-  ? string & NonNullable<unknown>
-  : Extract<keyof SanityIconNames, string>;
-
-/** Libraries a field can name: the supported ones, plus the project's own folders. */
-type IconLibraryId = SanityIconLibrary | ListedLibraryId;
 
 /**
  * A choice of library, style, and icons, where the style and icons are checked against the library.

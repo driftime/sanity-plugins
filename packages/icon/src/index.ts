@@ -1,10 +1,8 @@
 export { iconPlugin } from "@/plugin";
 export { createIconPreview } from "@/lib/preview";
 
+export type { SanityIconLibrary, SanityIconStyle, SanityIconName } from "@/types";
 export type {
-  SanityIconLibrary,
-  SanityIconStyle,
-  SanityIconName,
   SanityIconSelection,
   SanityIconOptions,
   SanityIconInitialValue,
