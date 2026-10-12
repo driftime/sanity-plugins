@@ -7,6 +7,7 @@ export type {
   SanityIconName,
   SanityIconSelection,
   SanityIconOptions,
+  SanityIconInitialValue,
   SanityIconDefinition,
   SanityIconConfig,
 } from "@/plugin";

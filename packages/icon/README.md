@@ -278,6 +278,37 @@ export const contactIcons: SanityIconName<"lucide">[] = ["mail", "phone", "globe
 
 <br />
 
+### Initial Values
+
+A field's `initialValue` names the icon a new document starts with. Once the build step has run, the name completes as it's typed.
+
+```typescript
+defineField({
+  name: "icon",
+  type: "icon",
+  description: "Icon shown beside the contact method.",
+  options: { library: "lucide", icons: ["mail", "phone", "globe"] },
+  initialValue: { name: "mail" },
+});
+```
+
+The initial value holds only the name. The first time the field is shown, the Studio finds the icon in the field's icon library and stores it with its icon library, style, and drawing. Until then, the stored icon has a name but no drawing, and it fails validation like any other icon in that state. A name the field doesn't offer is left as it is, and during development a message in the console names the field.
+
+Names complete from every icon library the build step listed, not only the field's. A function that returns the initial value needs `SanityIconInitialValue` as its return type, so the name is checked rather than widened to a string.
+
+```typescript
+import type { SanityIconInitialValue } from "@driftime/sanity-plugin-icon";
+
+defineField({
+  name: "icon",
+  type: "icon",
+  description: "Icon shown beside the contact method.",
+  initialValue: (): SanityIconInitialValue => ({ name: "mail" }),
+});
+```
+
+<br />
+
 ### The Project's Own Icons
 
 A folder of SVG files becomes an icon library of its own. It might hold a brand's marks, or a complete icon set drawn for a brand or a product. Pass the folder's path, relative to the project, to the build step under an identifier. Fields then name that identifier as their icon library.
@@ -460,6 +491,7 @@ The drawing is written with the name, which is what lets an icon render without 
 | `SanityIconConfig`            | `@driftime/sanity-plugin-icon`        | Everything `iconPlugin` accepts.                                      |
 | `SanityIconOptions`           | `@driftime/sanity-plugin-icon`        | The `options` an icon field accepts.                                  |
 | `SanityIconDefinition`        | `@driftime/sanity-plugin-icon`        | A field or array member of type `icon`.                               |
+| `SanityIconInitialValue`      | `@driftime/sanity-plugin-icon`        | The icon a field starts with.                                         |
 | `SanityIconSelection`         | `@driftime/sanity-plugin-icon`        | An icon library with a style and icons checked against it.            |
 | `SanityIconLibrary`           | `@driftime/sanity-plugin-icon`        | The identifier of a supported icon library.                           |
 | `SanityIconStyle`             | `@driftime/sanity-plugin-icon`        | The styles of an icon library, given its identifier.                  |

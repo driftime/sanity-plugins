@@ -1,5 +1,5 @@
 import type { SanityIconNames } from "@driftime/sanity-plugin-icon/names";
-import type { BaseSchemaTypeOptions, TypeAliasDefinition } from "sanity";
+import type { BaseSchemaTypeOptions, InitialValueProperty, TypeAliasDefinition } from "sanity";
 import { definePlugin } from "sanity";
 
 import { pluginName } from "@/config/defaults";
@@ -76,14 +76,29 @@ export type SanityIconOptions = BaseSchemaTypeOptions &
   (SanityIconSelection | { library?: undefined; style?: undefined; icons?: undefined });
 
 /**
- * Definition of a field or array member holding an icon, so its options are type-checked like a
+ * Icon a field starts with. The Studio saves its drawing from the field's library the first time the field is shown.
+ *
+ * @public
+ */
+export interface SanityIconInitialValue {
+  /** Name of the icon, from any library the build step has listed. */
+  name: SanityIconName<ListedLibraryId>;
+}
+
+/**
+ * Definition of a field or array member holding an icon, so its options and initial value are type-checked like a
  * built-in type's.
  *
  * @public
  */
-export interface SanityIconDefinition extends Omit<TypeAliasDefinition<typeof iconTypeName, undefined>, "options"> {
+export interface SanityIconDefinition extends Omit<
+  TypeAliasDefinition<typeof iconTypeName, undefined>,
+  "options" | "initialValue"
+> {
   /** Options for the field. */
   options?: SanityIconOptions;
+  /** Icon the field starts with, or a function that returns one. */
+  initialValue?: InitialValueProperty<unknown, SanityIconInitialValue>;
 }
 
 /**
