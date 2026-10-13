@@ -95,6 +95,8 @@ const config: NextConfig = {
 export default withIcons()(config);
 ```
 
+The icon libraries are converted when Next.js loads its configuration, before a build or dev server starts, so `withIcons` returns an async configuration function rather than an object. Where other plugins also wrap the configuration, `withIcons` is applied last, because a plugin that wraps it receives that function instead of the object it expects.
+
 <br />
 
 #### Other Vite Frameworks

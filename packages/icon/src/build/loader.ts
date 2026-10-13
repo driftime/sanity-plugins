@@ -6,7 +6,7 @@ import { isRecord } from "@repo/lib/utils";
 
 import { writeIconNames } from "@/build/names";
 import { listPluginFiles } from "@/build/packages";
-import { createRegistryModule, getSetsFolder } from "@/build/registry";
+import { createRegistryModule } from "@/build/registry";
 import { describeReport, detectLibraries, listRegistryDependencies, loadIconSet } from "@/build/sets";
 import { logger } from "@/config/defaults";
 
@@ -39,6 +39,45 @@ export interface LoaderContext {
 }
 
 /**
+ * Converts every installed library and writes each set to a file the bundler can split into its own chunk.
+ *
+ * @param root - The project folder.
+ * @param custom - Folders of the project's own icons, keyed by library identifier.
+ * @returns The libraries found, and each set with the file it was written to and what happened converting it.
+ */
+export async function writeIconSets(root: string, custom: Record<string, string>) {
+  const cacheDir = path.join(root, "node_modules", ".cache");
+  const setsDir = path.join(cacheDir, "driftime-icon", "sets");
+  await mkdir(setsDir, { recursive: true });
+
+  const libraries = await detectLibraries(root, custom);
+
+  const converted = await Promise.all(
+    libraries.flatMap((library) =>
+      library.styles.map(async ({ style }) => {
+        const { adapter } = library;
+        const { set, report } = await loadIconSet(library, style, { root, cacheDir });
+        const file = path.join(setsDir, `${adapter.library}-${style}.json`);
+        const content = JSON.stringify(set);
+        const current = await readFile(file, "utf8").catch(() => "");
+
+        if (current !== content) {
+          const temporary = `${file}.${randomUUID()}.tmp`;
+
+          // The browser and server builds convert at once, even in one process, so each set is swapped in whole.
+          await writeFile(temporary, content);
+          await rename(temporary, file);
+        }
+
+        return { adapter, style, set, file, report };
+      }),
+    ),
+  );
+
+  return { libraries, converted };
+}
+
+/**
  * Converts every installed library, writes each set to a file the bundler can split into its own chunk, and returns
  * the registry that replaces the placeholder.
  *
@@ -53,33 +92,14 @@ async function generateRegistryOnce(resourcePath: string, options: unknown) {
     Object.entries(custom).flatMap(([name, folder]) => (typeof folder === "string" ? [[name, folder]] : [])),
   );
 
-  const cacheDir = path.join(root, "node_modules", ".cache");
-  const setsDir = getSetsFolder(root);
-  await mkdir(setsDir, { recursive: true });
-
-  const libraries = await detectLibraries(root, folders);
+  const { libraries, converted } = await writeIconSets(root, folders);
   const files = new Map<string, string>();
   const names = new Map<string, Set<string>>();
 
-  const converted = await Promise.all(
-    libraries.flatMap((library) =>
-      library.styles.map(async ({ style }) => {
-        const { adapter } = library;
-        const { set, report } = await loadIconSet(library, style, { root, cacheDir });
-        const file = path.join(setsDir, `${adapter.library}-${style}.json`);
-        const temporary = `${file}.${randomUUID()}.tmp`;
+  for (const { adapter, style, set, file, report } of converted) {
+    const { label, library } = adapter;
+    logger.info(describeReport(label, style, report));
 
-        // The browser and server builds convert at once, even in one process, so each set is swapped in whole.
-        await writeFile(temporary, JSON.stringify(set));
-        await rename(temporary, file);
-        logger.info(describeReport(adapter.label, style, report));
-
-        return { library: adapter.library, style, set, file };
-      }),
-    ),
-  );
-
-  for (const { library, style, set, file } of converted) {
     const libraryNames = names.get(library) ?? new Set<string>();
 
     for (const icon of set.icons) libraryNames.add(icon.name);

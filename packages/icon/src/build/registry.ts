@@ -1,5 +1,4 @@
 import { realpathSync } from "node:fs";
-import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { isDefined } from "@repo/lib/utils";
@@ -38,16 +37,6 @@ export function isRegistryModule(id: string) {
   const [file] = id.split("?");
 
   return isDefined(file) && resolveRealPath(file) === registryModulePath;
-}
-
-/**
- * Works out the folder the Next.js build step writes converted sets to, inside the project's `node_modules`.
- *
- * @param root - The project's folder.
- * @returns The folder's path.
- */
-export function getSetsFolder(root: string) {
-  return path.join(root, "node_modules", ".cache", "driftime-icon", "sets");
 }
 
 /**

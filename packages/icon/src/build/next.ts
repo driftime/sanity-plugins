@@ -1,8 +1,8 @@
-import { mkdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { getSetsFolder, isRegistryModule, registryModulePath } from "@/build/registry";
+import { writeIconSets } from "@/build/loader";
+import { isRegistryModule, registryModulePath } from "@/build/registry";
 import type { SanityIconBuildOptions } from "@/build/vite";
 
 /** A webpack rule, limited to what the build step adds. */
@@ -51,20 +51,18 @@ const loaderPath = fileURLToPath(new URL("next-loader.js", import.meta.url));
  * Turbopack and webpack.
  *
  * @param options - Options for the build step.
- * @returns A function that extends the Next.js configuration.
+ * @returns A function that extends the Next.js configuration into an async configuration function, which converts the
+ *   installed libraries before Next.js starts building.
  * @public
  */
 export function withIcons(options: SanityIconBuildOptions = {}) {
-  const loader = { loader: loaderPath, options: { custom: options.custom ?? {} } };
+  const custom = options.custom ?? {};
+  const loader = { loader: loaderPath, options: { custom } };
   const placeholder = path.basename(path.dirname(path.dirname(registryModulePath)));
 
-  // Turbopack never finds files in a folder that was missing when the build started, so it's made before then.
-  mkdirSync(getSetsFolder(process.cwd()), { recursive: true });
-
-  return function extendConfig<Config extends SanityIconNextConfig>(config: Config): Config {
+  return function extendConfig<Config extends SanityIconNextConfig>(config: Config) {
     const { turbopack, webpack } = config;
-
-    return {
+    const extendedConfig: Config = {
       ...config,
       turbopack: {
         ...turbopack,
@@ -76,6 +74,16 @@ export function withIcons(options: SanityIconBuildOptions = {}) {
 
         return { ...resolved, module: { ...resolved.module, rules: [...(resolved.module?.rules ?? []), rule] } };
       },
+    };
+
+    // Turbopack never finds a file that wasn't there when the build started, even with a cache from an earlier build.
+    return async (phase: string) => {
+      // `next start` also loads the configuration, where `node_modules` may be read-only and nothing is bundled.
+      if (phase === "phase-development-server" || phase === "phase-production-build") {
+        await writeIconSets(process.cwd(), custom);
+      }
+
+      return extendedConfig;
     };
   };
 }
