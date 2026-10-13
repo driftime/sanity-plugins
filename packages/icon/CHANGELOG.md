@@ -1,5 +1,13 @@
 # @driftime/sanity-plugin-icon
 
+## 0.5.0
+
+### Minor Changes
+
+- dd24527: Fixed Next.js builds that failed to find a newly installed icon library when they reused an earlier build's cache.
+
+  - Breaking: `withIcons` now returns an async configuration function instead of an object, because it converts the libraries before Next.js starts building. A configuration that passes its result to another plugin needs to apply `withIcons` last.
+
 ## 0.4.3
 
 ### Patch Changes
